@@ -3,731 +3,515 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portland, ME — Homelessness Data Hub</title>
+<title>Portland, Maine — Homelessness Data Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ink: #1a1a18;
-    --ink-2: #3d3d39;
-    --ink-3: #6b6b65;
-    --ink-4: #9b9b93;
-    --paper: #f5f3ee;
-    --paper-2: #eeece6;
-    --paper-3: #e4e1d8;
-    --accent: #c0392b;
-    --accent-2: #e74c3c;
-    --accent-bg: #fdf0ee;
-    --blue: #2563a8;
-    --blue-bg: #eef3fb;
-    --green: #1e6b42;
-    --green-bg: #edf6f1;
-    --amber: #925900;
-    --amber-bg: #fdf5e6;
-    --border: rgba(0,0,0,0.1);
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-    --serif: 'Playfair Display', serif;
-  }
-
-  body {
-    font-family: var(--sans);
-    background: var(--paper);
-    color: var(--ink);
-    font-size: 15px;
-    line-height: 1.7;
-  }
-
-  /* === HEADER === */
-  .site-header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 3px solid var(--accent);
-  }
-
-  .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-  }
-
-  .site-name {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    color: var(--paper);
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: #a8d8a8;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .live-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #a8d8a8;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
-
-  nav {
-    display: flex;
-    gap: 0;
-  }
-
-  nav a {
-    color: rgba(245,243,238,0.65);
-    text-decoration: none;
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 0 14px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    border-left: 1px solid rgba(255,255,255,0.06);
-    transition: color 0.15s, background 0.15s;
-  }
-
-  nav a:hover {
-    color: var(--paper);
-    background: rgba(255,255,255,0.05);
-  }
-
-  /* === HERO === */
-  .hero {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 5rem 2rem 4rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .hero-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .hero-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent-2);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 1rem;
-  }
-
-  .hero-title {
-    font-family: var(--serif);
-    font-size: 3.2rem;
-    font-weight: 900;
-    line-height: 1.05;
-    margin-bottom: 1.25rem;
-    color: var(--paper);
-  }
-
-  .hero-title em {
-    color: var(--accent-2);
-    font-style: normal;
-  }
-
-  .hero-desc {
-    font-size: 15px;
-    color: rgba(245,243,238,0.65);
-    line-height: 1.75;
-    max-width: 480px;
-  }
-
-  .hero-disclaimer {
-    margin-top: 1.5rem;
-    padding: 0.75rem 1rem;
-    border-left: 2px solid var(--accent);
-    font-family: var(--mono);
-    font-size: 11px;
-    color: rgba(245,243,238,0.5);
-    line-height: 1.6;
-  }
-
-  .hero-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .hero-stat {
-    padding: 1.5rem;
-    background: rgba(255,255,255,0.03);
-  }
-
-  .hero-stat-num {
-    font-family: var(--serif);
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: var(--paper);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .hero-stat-num.accent { color: var(--accent-2); }
-  .hero-stat-num.green { color: #7ec8a0; }
-  .hero-stat-num.amber { color: #f0c060; }
-
-  .hero-stat-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgba(245,243,238,0.4);
-    margin-bottom: 6px;
-  }
-
-  .hero-stat-src {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: rgba(245,243,238,0.25);
-  }
-
-  /* === CONTENT === */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  section {
-    padding: 4rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    flex-shrink: 0;
-  }
-
-  .section-title {
-    font-family: var(--serif);
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  .section-updated {
-    margin-left: auto;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--ink-4);
-    white-space: nowrap;
-  }
-
-  /* === STAT GRID === */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 2rem;
-  }
-
-  .stat-card {
-    background: #fff;
-    padding: 1.25rem;
-  }
-
-  .stat-num {
-    font-family: var(--serif);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .stat-num.red { color: var(--accent); }
-  .stat-num.blue { color: var(--blue); }
-  .stat-num.green { color: var(--green); }
-  .stat-num.amber { color: var(--amber); }
-
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--ink-3);
-    margin-bottom: 4px;
-  }
-
-  .stat-note {
-    font-size: 11px;
-    color: var(--ink-4);
-    line-height: 1.5;
-  }
-
-  /* === SHELTER TABLE === */
-  .shelter-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  .shelter-table th {
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--ink-3);
-    text-align: left;
-    padding: 8px 12px;
-    background: var(--paper-2);
-    border-bottom: 1px solid var(--border);
-    font-weight: 500;
-  }
-
-  .shelter-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-
-  .shelter-table tr:last-child td { border-bottom: none; }
-  .shelter-table tr:hover td { background: var(--paper-2); }
-
-  .shelter-name {
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 2px;
-  }
-
-  .shelter-address {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--ink-4);
-  }
-
-  .pop-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 2px;
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .pop-all { background: var(--paper-3); color: var(--ink-2); }
-  .pop-men { background: var(--blue-bg); color: var(--blue); }
-  .pop-women { background: #fdf0f5; color: #8b2252; }
-  .pop-youth { background: var(--amber-bg); color: var(--amber); }
-  .pop-family { background: var(--green-bg); color: var(--green); }
-
-  .cap-bar {
-    height: 6px;
-    border-radius: 2px;
-    background: var(--paper-3);
-    overflow: hidden;
-    margin-top: 4px;
-  }
-
-  .cap-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--accent);
-  }
-
-  .cap-fill.medium { background: var(--amber); }
-  .cap-fill.low { background: var(--green); }
-
-  .op-status {
-    font-family: var(--mono);
-    font-size: 10px;
-  }
-
-  .op-24 { color: var(--green); }
-  .op-night { color: var(--blue); }
-  .op-day { color: var(--amber); }
-
-  /* === CHARTS === */
-  .chart-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .chart-box {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.25rem;
-  }
-
-  .chart-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ink-3);
-    margin-bottom: 1rem;
-  }
-
-  /* === POLICY TIMELINE === */
-  .policy-track {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .policy-item {
-    display: grid;
-    grid-template-columns: 90px 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-  }
-
-  .policy-item:last-child { border-bottom: none; }
-
-  .policy-date {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--ink-3);
-    padding-top: 2px;
-    line-height: 1.4;
-  }
-
-  .policy-body {}
-
-  .policy-title {
-    font-weight: 500;
-    font-size: 14px;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-
-  .policy-desc {
-    font-size: 13px;
-    color: var(--ink-3);
-    line-height: 1.6;
-  }
-
-  .policy-tag {
-    display: inline-block;
-    margin-top: 6px;
-    padding: 2px 8px;
-    border-radius: 2px;
-    font-family: var(--mono);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .tag-passed { background: var(--green-bg); color: var(--green); }
-  .tag-active { background: var(--blue-bg); color: var(--blue); }
-  .tag-debated { background: var(--amber-bg); color: var(--amber); }
-  .tag-blocked { background: var(--accent-bg); color: var(--accent); }
-  .tag-proposed { background: var(--paper-3); color: var(--ink-2); }
-
-  /* === DATA NOTES === */
-  .data-note {
-    background: var(--paper-2);
-    border-left: 3px solid var(--amber);
-    padding: 0.875rem 1rem;
-    font-size: 12px;
-    color: var(--ink-3);
-    line-height: 1.6;
-    border-radius: 0 4px 4px 0;
-    margin: 1rem 0;
-  }
-
-  .data-note strong { color: var(--ink-2); }
-
-  /* === ORG CARDS === */
-  .org-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-  }
-
-  .org-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.25rem;
-  }
-
-  .org-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-
-  .org-role {
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ink-4);
-    margin-bottom: 8px;
-  }
-
-  .org-desc {
-    font-size: 12px;
-    color: var(--ink-3);
-    line-height: 1.6;
-    margin-bottom: 10px;
-  }
-
-  .org-link {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--blue);
-    text-decoration: none;
-  }
-
-  .org-link:hover { text-decoration: underline; }
-
-  /* === GLOSSARY === */
-  .glossary-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .glossary-item {
-    background: #fff;
-    padding: 1rem 1.25rem;
-  }
-
-  .glossary-term {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
-  }
-
-  .glossary-def {
-    font-size: 12px;
-    color: var(--ink-3);
-    line-height: 1.6;
-  }
-
-  /* === FOOTER === */
-  .site-footer {
-    background: var(--ink);
-    color: rgba(245,243,238,0.4);
-    padding: 2.5rem;
-    font-family: var(--mono);
-    font-size: 11px;
-    line-height: 1.8;
-    text-align: center;
-  }
-
-  .site-footer a { color: rgba(245,243,238,0.6); }
-
-  /* === TICKER === */
-  .ticker {
-    background: var(--accent);
-    color: #fff;
-    padding: 6px 0;
-    overflow: hidden;
-    font-family: var(--mono);
-    font-size: 11px;
-    white-space: nowrap;
-  }
-
-  .ticker-inner {
-    display: inline-block;
-    animation: scroll 40s linear infinite;
-    padding-left: 100%;
-  }
-
-  .ticker-inner span { margin-right: 4rem; }
-  .ticker-inner .sep { color: rgba(255,255,255,0.4); margin-right: 4rem; }
-
-  @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* === RESPONSIVE === */
-  @media (max-width: 800px) {
-    .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
-    .chart-row { grid-template-columns: 1fr; }
-    .glossary-grid { grid-template-columns: 1fr; }
-    nav { display: none; }
-    .hero-title { font-size: 2.2rem; }
-  }
-
-  /* === LEGEND === */
-  .legend {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-    font-size: 11px;
-    color: var(--ink-3);
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .legend-swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  /* highlight box */
-  .highlight-box {
-    background: var(--blue-bg);
-    border: 1px solid rgba(37,99,168,0.15);
-    border-radius: 4px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 13px;
-    color: var(--ink-2);
-    line-height: 1.7;
-  }
-
-  .highlight-box strong { color: var(--blue); }
-
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  @media (max-width: 700px) {
-    .two-col { grid-template-columns: 1fr; }
-  }
-
-  .source-tag {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--ink-4);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  h3 {
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink-2);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.75rem;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#0f0f0e;
+  --ink-2:#2a2a28;
+  --ink-3:#5a5a55;
+  --ink-4:#9a9a93;
+  --paper:#faf8f3;
+  --paper-2:#f2efe8;
+  --paper-3:#e8e4da;
+  --red:#b83228;
+  --red-light:#fdf1f0;
+  --blue:#1a56a0;
+  --blue-light:#eef3fb;
+  --green:#1a5e3a;
+  --green-light:#edf6f1;
+  --amber:#8a5200;
+  --amber-light:#fdf5e4;
+  --border:rgba(0,0,0,0.09);
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.05);
+  --shadow-lg:0 4px 24px rgba(0,0,0,0.10),0 1px 4px rgba(0,0,0,0.06);
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --radius:6px;
+}
+
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:14.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+.site-header{
+  background:var(--ink);
+  position:sticky;top:0;z-index:200;
+  border-bottom:2px solid var(--red);
+}
+.header-inner{
+  max-width:1280px;margin:0 auto;padding:0 2rem;
+  display:flex;align-items:center;justify-content:space-between;height:52px;
+}
+.logo{
+  font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.06em;
+  color:var(--paper);text-decoration:none;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:22px;height:22px;background:var(--red);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.logo-icon svg{width:12px;height:12px;fill:#fff}
+nav{display:flex}
+nav a{
+  color:rgba(250,248,243,.5);text-decoration:none;
+  font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;
+  padding:0 13px;height:52px;display:flex;align-items:center;
+  border-left:1px solid rgba(255,255,255,.05);
+  transition:color .15s,background .15s;
+}
+nav a:hover{color:var(--paper);background:rgba(255,255,255,.04)}
+.live-pill{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:10px;color:#7ec8a0;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.pulse{
+  width:6px;height:6px;border-radius:50%;background:#7ec8a0;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+
+/* ── TICKER ── */
+.ticker{
+  background:var(--red);color:#fff;
+  padding:5px 0;overflow:hidden;
+  font-family:var(--mono);font-size:10.5px;white-space:nowrap;
+}
+.ticker-track{display:inline-block;animation:marquee 60s linear infinite;padding-left:100%}
+.ticker-track span{margin-right:3.5rem}
+.ticker-track .sep{color:rgba(255,255,255,.35);margin-right:3.5rem}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── HERO ── */
+.hero{
+  background:var(--ink);color:var(--paper);
+  padding:5.5rem 2rem 5rem;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:45%;
+  background:linear-gradient(135deg,rgba(184,50,40,.12) 0%,rgba(26,86,160,.08) 100%);
+  pointer-events:none;
+}
+.hero-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.hero-kicker{
+  font-family:var(--mono);font-size:10px;color:var(--red);
+  text-transform:uppercase;letter-spacing:.15em;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-kicker::before{content:'';width:24px;height:1px;background:var(--red)}
+.hero-h1{
+  font-family:var(--serif);font-size:3.6rem;line-height:1.03;
+  margin-bottom:1.5rem;color:var(--paper);
+}
+.hero-h1 em{color:var(--red);font-style:italic}
+.hero-sub{
+  font-size:14px;color:rgba(250,248,243,.55);line-height:1.8;max-width:440px;
+  margin-bottom:2rem;
+}
+.hero-note{
+  padding:.875rem 1.125rem;
+  border-left:2px solid rgba(250,248,243,.15);
+  font-family:var(--mono);font-size:10.5px;color:rgba(250,248,243,.38);
+  line-height:1.65;border-radius:0 4px 4px 0;
+}
+.hero-note strong{color:rgba(250,248,243,.6)}
+
+/* Hero stat cards */
+.hero-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);overflow:hidden;
+}
+.hstat{
+  padding:1.6rem 1.4rem;
+  background:rgba(255,255,255,.025);
+  transition:background .2s;
+}
+.hstat:hover{background:rgba(255,255,255,.05)}
+.hstat-tag{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:rgba(250,248,243,.35);margin-bottom:.5rem}
+.hstat-num{font-family:var(--serif);font-size:2.6rem;line-height:1;margin-bottom:3px}
+.hstat-num.red{color:#f07060}
+.hstat-num.green{color:#7ec8a0}
+.hstat-num.amber{color:#f5c060}
+.hstat-num.white{color:var(--paper)}
+.hstat-src{font-family:var(--mono);font-size:9px;color:rgba(250,248,243,.22)}
+
+/* ── SECTION WRAPPER ── */
+.container{max-width:1280px;margin:0 auto;padding:0 2rem}
+section.sec{padding:4.5rem 0;border-bottom:1px solid var(--border)}
+.sec-head{
+  display:flex;align-items:baseline;gap:1rem;
+  margin-bottom:2.5rem;padding-bottom:1.125rem;
+  border-bottom:1px solid var(--border);
+}
+.sec-num{
+  font-family:var(--mono);font-size:10px;color:var(--red);
+  text-transform:uppercase;letter-spacing:.1em;flex-shrink:0;
+}
+.sec-title{font-family:var(--serif);font-size:1.9rem;color:var(--ink)}
+.sec-date{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--ink-4);white-space:nowrap}
+
+/* ── STAT CARDS ── */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  margin-bottom:2rem;
+}
+.scard{background:#fff;padding:1.25rem;transition:background .15s}
+.scard:hover{background:var(--paper-2)}
+.scard-tag{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-4);margin-bottom:.4rem}
+.scard-num{font-family:var(--serif);font-size:1.9rem;line-height:1;margin-bottom:3px}
+.scard-num.red{color:var(--red)}
+.scard-num.blue{color:var(--blue)}
+.scard-num.green{color:var(--green)}
+.scard-num.amber{color:var(--amber)}
+.scard-note{font-size:11px;color:var(--ink-4);line-height:1.55}
+
+/* ── DATA NOTE ── */
+.dnote{
+  background:var(--paper-2);border-left:3px solid var(--amber);
+  padding:.9rem 1.1rem;font-size:12px;color:var(--ink-3);line-height:1.65;
+  border-radius:0 var(--radius) var(--radius) 0;margin:1rem 0;
+}
+.dnote strong{color:var(--ink-2)}
+.dnote.blue{border-left-color:var(--blue);background:var(--blue-light)}
+.dnote.green{border-left-color:var(--green);background:var(--green-light)}
+.dnote.red{border-left-color:var(--red);background:var(--red-light)}
+
+/* ── HIGHLIGHT ── */
+.hbox{
+  background:var(--blue-light);border:1px solid rgba(26,86,160,.12);
+  border-radius:var(--radius);padding:1.1rem 1.3rem;margin-bottom:1.5rem;
+  font-size:13px;color:var(--ink-2);line-height:1.75;
+}
+.hbox strong{color:var(--blue)}
+
+/* ── QUOTE BLOCK ── */
+.qblock{
+  background:var(--ink);color:var(--paper);
+  border-radius:var(--radius);padding:2rem 2.25rem;
+  margin:2rem 0;position:relative;
+}
+.qblock::before{
+  content:'\201C';
+  font-family:var(--serif);font-size:5rem;line-height:1;
+  color:rgba(250,248,243,.08);position:absolute;top:.5rem;left:1.25rem;
+  pointer-events:none;
+}
+.qblock-text{
+  font-family:var(--serif);font-size:1.25rem;line-height:1.55;
+  font-style:italic;color:rgba(250,248,243,.9);margin-bottom:.875rem;
+}
+.qblock-attr{font-family:var(--mono);font-size:10px;color:rgba(250,248,243,.4);text-transform:uppercase;letter-spacing:.08em}
+
+/* ── SHELTER TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{
+  font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--ink-3);text-align:left;padding:9px 12px;
+  background:var(--paper-2);border-bottom:1px solid var(--border);font-weight:500;
+}
+.tbl td{padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--paper-2)}
+.tbl-name{font-weight:600;color:var(--ink);margin-bottom:2px;font-size:13px}
+.tbl-addr{font-family:var(--mono);font-size:9.5px;color:var(--ink-4)}
+.pop-badge{
+  display:inline-block;padding:2px 8px;border-radius:3px;
+  font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;
+}
+.pop-all{background:var(--paper-3);color:var(--ink-2)}
+.pop-women{background:#fdf0f5;color:#8b2252}
+.pop-youth{background:var(--amber-light);color:var(--amber)}
+.pop-family{background:var(--green-light);color:var(--green)}
+.bar{height:5px;border-radius:2px;background:var(--paper-3);margin-top:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;background:var(--red)}
+.bar-fill.med{background:var(--amber)}
+.bar-fill.lo{background:var(--green)}
+.op{font-family:var(--mono);font-size:9.5px}
+.op-24{color:var(--green)}.op-nt{color:var(--blue)}.op-plan{color:var(--amber)}
+
+/* ── CHARTS ── */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.chart-box{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.35rem;box-shadow:var(--shadow)}
+.chart-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:.9rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-size:10.5px;color:var(--ink-3)}
+.leg-item{display:flex;align-items:center;gap:5px}
+.leg-sw{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── POLICY TIMELINE ── */
+.timeline{display:flex;flex-direction:column}
+.t-item{
+  display:grid;grid-template-columns:100px 1fr;gap:1.75rem;
+  padding:1.75rem 0;border-bottom:1px solid var(--border);
+}
+.t-item:last-child{border-bottom:none}
+.t-date{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);padding-top:1px;line-height:1.5}
+.t-body{}
+.t-title{font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:5px}
+.t-desc{font-size:12.5px;color:var(--ink-3);line-height:1.65}
+.tag{
+  display:inline-block;margin-top:7px;padding:2px 9px;border-radius:3px;
+  font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.07em;
+}
+.tag-pass{background:var(--green-light);color:var(--green)}
+.tag-active{background:var(--blue-light);color:var(--blue)}
+.tag-debate{background:var(--amber-light);color:var(--amber)}
+.tag-block{background:var(--red-light);color:var(--red)}
+.tag-prop{background:var(--paper-3);color:var(--ink-2)}
+.tag-dead{background:#eee;color:#888}
+
+/* ── BILLS TABLE ── */
+.bills-wrap{overflow-x:auto;margin-bottom:2rem}
+.btbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.btbl th{
+  font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--ink-3);text-align:left;padding:9px 12px;
+  background:var(--paper-2);border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap;
+}
+.btbl td{padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.btbl tr:last-child td{border-bottom:none}
+.btbl tr:hover td{background:var(--paper-2)}
+.bill-id{font-family:var(--mono);font-size:10.5px;white-space:nowrap;font-weight:500}
+
+/* ── POLICY DEBATE CARDS ── */
+.debate-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:1rem;margin-top:1.25rem}
+.dcard{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.25rem;box-shadow:var(--shadow);
+  border-top:3px solid var(--border);
+  transition:transform .2s,box-shadow .2s;
+}
+.dcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.dcard.dc-housing{border-top-color:var(--green)}
+.dcard.dc-mixed{border-top-color:var(--amber)}
+.dcard.dc-legal{border-top-color:var(--blue)}
+.dcard.dc-data{border-top-color:var(--ink-3)}
+.dcard-kicker{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.dc-housing .dcard-kicker{color:var(--green)}
+.dc-mixed .dcard-kicker{color:var(--amber)}
+.dc-legal .dcard-kicker{color:var(--blue)}
+.dc-data .dcard-kicker{color:var(--ink-3)}
+.dcard-title{font-weight:600;font-size:13px;color:var(--ink);margin-bottom:6px}
+.dcard-body{font-size:12px;color:var(--ink-3);line-height:1.65}
+
+/* ── CITY COMPARISON ── */
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:2rem}
+.city-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.25rem;box-shadow:var(--shadow);
+}
+.city-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.city-name{font-weight:700;font-size:13.5px;color:var(--ink)}
+.approach-badge{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}
+.ap-hf{background:var(--green-light);color:var(--green)}
+.ap-enf{background:var(--red-light);color:var(--red)}
+.ap-mix{background:var(--amber-light);color:var(--amber)}
+.ap-alt{background:var(--blue-light);color:var(--blue)}
+.city-stat{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);margin-bottom:6px}
+.city-stat strong{color:var(--ink-2)}
+.city-body{font-size:12px;color:var(--ink-3);line-height:1.65}
+.city-result{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10.5px}
+.res-up{color:var(--red)}.res-dn{color:var(--green)}.res-mix{color:var(--amber)}
+
+/* ── ORGS ── */
+.org-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:1rem}
+.ocard{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.ocard-name{font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:3px}
+.ocard-role{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-4);margin-bottom:8px}
+.ocard-body{font-size:12px;color:var(--ink-3);line-height:1.65;margin-bottom:10px}
+.ocard-link{font-family:var(--mono);font-size:10px;color:var(--blue);text-decoration:none}
+.ocard-link:hover{text-decoration:underline}
+
+/* ── PHOTO GALLERY ── */
+.gallery-intro{
+  font-size:13px;color:var(--ink-3);line-height:1.7;margin-bottom:2rem;max-width:760px;
+}
+.photo-mosaic{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:auto;
+  gap:12px;
+  margin-bottom:2rem;
+}
+.photo-tile{
+  border-radius:var(--radius);overflow:hidden;
+  background:var(--paper-3);position:relative;
+  box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;
+  cursor:default;
+}
+.photo-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.photo-tile.tall{grid-row:span 2}
+.photo-tile.wide{grid-column:span 2}
+.photo-visual{
+  width:100%;height:100%;min-height:200px;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:10px;
+  font-family:var(--mono);font-size:10px;
+  color:rgba(255,255,255,.6);text-align:center;
+  padding:1rem;
+}
+.photo-tile.tall .photo-visual{min-height:420px}
+.photo-tile.wide .photo-visual{min-height:220px}
+/* Individual tile color themes */
+.tile-1{background:linear-gradient(160deg,#1a2a3a 0%,#2d4a6a 100%)}
+.tile-2{background:linear-gradient(160deg,#2a1a1a 0%,#5a2a28 100%)}
+.tile-3{background:linear-gradient(160deg,#1a2a1e 0%,#2a4a32 100%)}
+.tile-4{background:linear-gradient(160deg,#2a2518 0%,#4a4028 100%)}
+.tile-5{background:linear-gradient(160deg,#1e1a2a 0%,#3a2a5a 100%)}
+.tile-6{background:linear-gradient(160deg,#1a2a28 0%,#1a4a3a 100%)}
+.photo-icon{font-size:2.5rem;margin-bottom:6px;opacity:.7}
+.photo-caption-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.75));
+  padding:2rem .9rem .75rem;
+}
+.photo-caption{
+  font-size:11px;color:rgba(255,255,255,.85);line-height:1.45;
+}
+.photo-credit{
+  font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.4);
+  margin-top:3px;
+}
+.photo-note{
+  background:var(--paper-2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1rem 1.25rem;font-size:12px;color:var(--ink-3);line-height:1.65;
+  margin-bottom:1.5rem;
+}
+.photo-note strong{color:var(--ink-2)}
+
+/* ── GLOSSARY ── */
+.glos-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.gitem{background:#fff;padding:1rem 1.2rem}
+.gitem-term{
+  font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--red);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;
+}
+.gitem-def{font-size:12px;color:var(--ink-3);line-height:1.6}
+
+/* ── CRISIS BAR ── */
+.crisis-bar{
+  background:var(--red);color:#fff;
+  padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;
+  gap:1.5rem;flex-wrap:wrap;
+}
+.crisis-left{font-family:var(--mono);font-size:12px;font-weight:500}
+.crisis-right{
+  display:flex;gap:2rem;flex-wrap:wrap;
+}
+.crisis-item{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.8)}
+.crisis-item strong{color:#fff;display:block;font-size:14px}
+
+/* ── FOOTER ── */
+.site-footer{
+  background:var(--ink);color:rgba(250,248,243,.35);
+  padding:2.75rem 2rem;font-family:var(--mono);font-size:10.5px;
+  line-height:1.85;text-align:center;
+}
+.site-footer a{color:rgba(250,248,243,.5)}
+.site-footer strong{color:rgba(250,248,243,.6)}
+
+/* ── UTILITY ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem}
+h3.sub{
+  font-family:var(--sans);font-size:11.5px;font-weight:600;
+  color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;
+}
+.src-tag{font-family:var(--mono);font-size:9px;color:var(--ink-4);text-transform:uppercase;letter-spacing:.06em}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-inner,.two-col,.three-col{grid-template-columns:1fr;gap:2rem}
+  .chart-row{grid-template-columns:1fr}
+  .glos-grid{grid-template-columns:1fr}
+  nav{display:none}
+  .hero-h1{font-size:2.4rem}
+  .photo-mosaic{grid-template-columns:1fr 1fr}
+  .photo-tile.tall{grid-row:span 1}
+  .photo-tile.wide{grid-column:span 1}
+  .t-item{grid-template-columns:1fr;gap:.4rem}
+}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="site-header">
   <div class="header-inner">
-    <a href="#" class="site-name">Portland, ME — Homelessness Data Hub</a>
+    <a href="#" class="logo">
+      <span class="logo-icon"><svg viewBox="0 0 12 12"><path d="M6 1L1 10h10L6 1z"/></svg></span>
+      Portland, ME · Homelessness Data Hub
+    </a>
     <nav>
-      <a href="#stats">Statistics</a>
+      <a href="#stats">Stats</a>
       <a href="#shelters">Shelters</a>
-      <a href="#trends">Trends</a>
+      <a href="#photos">Photos</a>
       <a href="#policy">Policy</a>
-      <a href="#orgs">Organizations</a>
+      <a href="#bills">Bills</a>
+      <a href="#national">National</a>
+      <a href="#orgs">Orgs</a>
       <a href="#glossary">Glossary</a>
     </nav>
-    <div class="live-badge">
-      <span class="live-dot"></span>
-      Data-referenced
-    </div>
+    <div class="live-pill"><span class="pulse"></span>Maine-only data</div>
   </div>
 </header>
 
-<div class="ticker" aria-label="Current updates">
-  <div class="ticker-inner">
-    <span>2025 Maine Point-in-Time Count: 2,413 people experiencing homelessness statewide (Jan. 22, 2025)</span>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>2025 Maine PIT Count: 2,413 unhoused statewide — 3rd consecutive annual decrease · Source: MaineHousing</span>
     <span class="sep">///</span>
-    <span>Portland camping ordinance enforcement resumed November 1, 2025</span>
+    <span>Mayor Dion (Portland, ME): "We are running out of runway to meet the demand" — Jan. 6, 2025</span>
     <span class="sep">///</span>
-    <span>Avg. shelter stay length rose 38% in 2024 — from 8.4 to 11.6 days</span>
+    <span>Portland sues Maine DHHS over $4.4M shelter funding cut — May 2025</span>
     <span class="sep">///</span>
-    <span>Preble Street Wellness Shelter planned for 5 Portland Street</span>
+    <span>LD 1476 (lodging fee for shelters) killed in Maine House 92–51, June 2025</span>
     <span class="sep">///</span>
-    <span>1,200+ Mainers at risk of housing loss under federal changes, per Gov. Mills</span>
+    <span>HSC Riverton: 258 beds, all but 10–15 filled every night · Mayor Dion, Nov. 2025</span>
     <span class="sep">///</span>
-    <span>2025 Maine PIT count: third consecutive year of decrease since 2022 peak of 4,411</span>
+    <span>Maine housing demand outpaces supply by 38,500 units — MaineHousing/partner study</span>
     <span class="sep">///</span>
-    <span>2025 Maine Point-in-Time Count: 2,413 people experiencing homelessness statewide (Jan. 22, 2025)</span>
+    <span>Preble Street served 1,000,000+ meals in 2023 · 1,200 Mainers at risk of re-entering homelessness (2025)</span>
     <span class="sep">///</span>
-    <span>Portland camping ordinance enforcement resumed November 1, 2025</span>
+    <span>City removed 809 tents in Portland in 2024 · no large encampments remain, but unsheltered people persist</span>
     <span class="sep">///</span>
-    <span>Avg. shelter stay length rose 38% in 2024 — from 8.4 to 11.6 days</span>
+    <span>Avesta + Preble Street: new permanent supportive housing planned at former Oxford St. site (construction 2025)</span>
     <span class="sep">///</span>
-    <span>Preble Street Wellness Shelter planned for 5 Portland Street</span>
+    <span>62% of Portland HSC guests come from communities outside Portland — City of Portland data</span>
     <span class="sep">///</span>
-    <span>1,200+ Mainers at risk of housing loss under federal changes, per Gov. Mills</span>
+    <span>2025 Maine PIT Count: 2,413 unhoused statewide — 3rd consecutive annual decrease · Source: MaineHousing</span>
     <span class="sep">///</span>
-    <span>2025 Maine PIT count: third consecutive year of decrease since 2022 peak of 4,411</span>
+    <span>Mayor Dion (Portland, ME): "We are running out of runway to meet the demand" — Jan. 6, 2025</span>
+    <span class="sep">///</span>
+    <span>Portland sues Maine DHHS over $4.4M shelter funding cut — May 2025</span>
+    <span class="sep">///</span>
+    <span>LD 1476 (lodging fee for shelters) killed in Maine House 92–51, June 2025</span>
+    <span class="sep">///</span>
+    <span>HSC Riverton: 258 beds, all but 10–15 filled every night · Mayor Dion, Nov. 2025</span>
+    <span class="sep">///</span>
+    <span>Maine housing demand outpaces supply by 38,500 units — MaineHousing/partner study</span>
+    <span class="sep">///</span>
+    <span>Preble Street served 1,000,000+ meals in 2023 · 1,200 Mainers at risk of re-entering homelessness (2025)</span>
+    <span class="sep">///</span>
+    <span>City removed 809 tents in Portland in 2024 · no large encampments remain, but unsheltered people persist</span>
+    <span class="sep">///</span>
+    <span>Avesta + Preble Street: new permanent supportive housing planned at former Oxford St. site (construction 2025)</span>
+    <span class="sep">///</span>
+    <span>62% of Portland HSC guests come from communities outside Portland — City of Portland data</span>
     <span class="sep">///</span>
   </div>
 </div>
@@ -736,869 +520,978 @@
 <section class="hero">
   <div class="hero-inner">
     <div>
-      <p class="hero-eyebrow">Portland, Maine · Cumberland County · Open Data</p>
-      <h1 class="hero-title">The State of<br><em>Homelessness</em><br>in Portland</h1>
-      <p class="hero-desc">A nonpartisan, data-driven reference covering who is unhoused in Portland, Maine — where people sleep, what shelter exists, and what policies are shaping the crisis. All figures sourced from official government reports, MaineHousing, and credentialed nonprofits.</p>
-      <div class="hero-disclaimer">
-        This site presents facts, not policy opinions. Data is drawn from Point-in-Time counts, City of Portland HHS reports, MaineHousing publications, and Preble Street. Where figures are uncertain, that uncertainty is noted.
+      <div class="hero-kicker">Portland, Maine · Cumberland County · Nonpartisan Reference</div>
+      <h1 class="hero-h1">The State of<br><em>Homelessness</em><br>in Portland, ME</h1>
+      <p class="hero-sub">A data-driven, strictly nonpartisan reference covering who is unhoused in Portland, Maine — where people sleep, what shelter exists, what policies are being debated, how the state is responding, and how comparable cities are approaching the same crisis. All data sourced from Maine government, MaineHousing, and credentialed nonprofits. No Oregon data. No partisan framing.</p>
+      <div class="hero-note">
+        Mayor of Portland, Maine: <strong>Mark Dion</strong> (inaugurated Jan. 6, 2024) · Former Cumberland County Sheriff and Maine State Legislator ·
+        This site covers Portland, Maine exclusively. It has no affiliation with the City of Portland, Preble Street, MaineHousing, or any political organization.
       </div>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-label">Maine PIT count — Jan 2025</div>
-        <div class="hero-stat-num">2,413</div>
-        <div class="hero-stat-src">Source: MaineHousing, 2025</div>
+      <div class="hstat">
+        <div class="hstat-tag">Maine PIT Count — Jan 2025</div>
+        <div class="hstat-num white">2,413</div>
+        <div class="hstat-src">MaineHousing · 3rd straight decrease</div>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-label">Change from 2024</div>
-        <div class="hero-stat-num green">−282</div>
-        <div class="hero-stat-src">10% decrease YOY</div>
+      <div class="hstat">
+        <div class="hstat-tag">Change from 2024</div>
+        <div class="hstat-num green">−282</div>
+        <div class="hstat-src">−10% · methodology caveat applies</div>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-label">2022 pandemic peak</div>
-        <div class="hero-stat-num accent">4,411</div>
-        <div class="hero-stat-src">Statewide all-time high</div>
+      <div class="hstat">
+        <div class="hstat-tag">HSC beds filled nightly</div>
+        <div class="hstat-num red">~245</div>
+        <div class="hstat-src">Of 258 total · "near capacity every night"</div>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-label">Avg. shelter stay (2024)</div>
-        <div class="hero-stat-num amber">11.6 days</div>
-        <div class="hero-stat-src">Up 38% from 8.4 days in 2023</div>
+      <div class="hstat">
+        <div class="hstat-tag">Avg shelter stay (2024)</div>
+        <div class="hstat-num amber">11.6 days</div>
+        <div class="hstat-src">Up 38% from 8.4 days in 2023</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SECTION 1: KEY STATISTICS -->
+<!-- CRISIS BAR -->
+<div class="crisis-bar">
+  <div class="crisis-left">⚠ Current pressure points</div>
+  <div class="crisis-right">
+    <div class="crisis-item"><strong>$4.4M</strong>State funding cut Portland is fighting in court</div>
+    <div class="crisis-item"><strong>62%</strong>HSC guests from outside Portland</div>
+    <div class="crisis-item"><strong>38,500 units</strong>Maine housing shortage</div>
+    <div class="crisis-item"><strong>1,200</strong>Mainers at risk of re-entering homelessness</div>
+    <div class="crisis-item"><strong>84,000</strong>Additional units needed by 2030</div>
+  </div>
+</div>
+
+<!-- 01 STATISTICS -->
 <div id="stats">
-<section>
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">01</span>
-      <h2 class="section-title">Key Statistics</h2>
-      <span class="section-updated">Maine PIT Count · Jan 2025</span>
-    </div>
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">Key Statistics</h2>
+    <span class="sec-date">MaineHousing PIT Count · Jan 2025 · Portland HHS 2024</span>
+  </div>
 
-    <div class="data-note">
-      <strong>Understanding Point-in-Time (PIT) counts:</strong> The annual PIT count is a federally mandated snapshot of homelessness on a single January night. It captures people in shelters, transitional housing, and outdoor locations. It does not capture people in informal arrangements (doubled-up, couch-surfing). Pandemic-era motel programs inflated 2022–2023 counts; their expiration deflates 2024–2025 figures. Interpret trends with caution.
-    </div>
+  <div class="dnote">
+    <strong>Understanding Point-in-Time (PIT) counts:</strong> Federally mandated snapshot of homelessness on a single January night. Captures sheltered and unsheltered individuals — but misses people doubled-up, couch-surfing, or in informal motel arrangements. MaineHousing explicitly cautions that the apparent decline "does not necessarily mean fewer people are actually facing homelessness" — pandemic-era motel counts inflated 2022–2023 figures, and their expiration deflates 2024–2025 figures. Read trends with care.
+  </div>
 
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-label">Statewide unhoused (2025 PIT)</div>
-        <div class="stat-num red">2,413</div>
-        <div class="stat-note">3rd consecutive annual decrease from 2022 peak</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">In emergency shelters (2024)</div>
-        <div class="stat-num blue">1,342</div>
-        <div class="stat-note">Shelters remain near full capacity statewide</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">In transitional housing (2024)</div>
-        <div class="stat-num">732</div>
-        <div class="stat-note">Includes permanent supportive housing programs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Unsheltered — outdoors (2024)</div>
-        <div class="stat-num red">273</div>
-        <div class="stat-note">Sleeping in cars, encampments, public spaces</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">In emergency motels (2024)</div>
-        <div class="stat-num amber">348</div>
-        <div class="stat-note">Down from 1,954 in 2023 due to expired pandemic funding</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Children under 18 (2024)</div>
-        <div class="stat-num amber">656</div>
-        <div class="stat-note">Part of 1,865 unhoused family units; only 2 were unsheltered</div>
+  <div class="stat-grid">
+    <div class="scard"><div class="scard-tag">Maine statewide unhoused (2025)</div><div class="scard-num red">2,413</div><div class="scard-note">3rd consecutive decrease from 2022 peak of 4,411</div></div>
+    <div class="scard"><div class="scard-tag">In emergency shelters (2024)</div><div class="scard-num blue">1,342</div><div class="scard-note">Most shelters near or at full capacity nightly</div></div>
+    <div class="scard"><div class="scard-tag">In transitional housing (2024)</div><div class="scard-num">732</div><div class="scard-note">Includes permanent supportive housing programs</div></div>
+    <div class="scard"><div class="scard-tag">Unsheltered outdoors (2024)</div><div class="scard-num red">273</div><div class="scard-note">Cars, encampments, public spaces</div></div>
+    <div class="scard"><div class="scard-tag">Children under 18 (2024)</div><div class="scard-num amber">656</div><div class="scard-note">Of 1,865 family units; only 2 unsheltered</div></div>
+    <div class="scard"><div class="scard-tag">Placed into housing — Portland (2023)</div><div class="scard-num green">162</div><div class="scard-note">Per Portland HHS Year in Review 2023</div></div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3 class="sub">Portland city shelter numbers — Mayor Dion, Jan. 2025</h3>
+      <div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
+        <div class="scard"><div class="scard-tag">People sheltered (2024)</div><div class="scard-num" style="font-size:1.5rem">2,000</div><div class="scard-note">Across all 3 Portland shelters</div></div>
+        <div class="scard"><div class="scard-tag">Avg. beds filled nightly</div><div class="scard-num red" style="font-size:1.5rem">600</div><div class="scard-note">Family, HSC, asylum seeker shelters combined</div></div>
+        <div class="scard"><div class="scard-tag">HSC capacity (Riverton)</div><div class="scard-num blue" style="font-size:1.5rem">258</div><div class="scard-note">~245 occupied most nights</div></div>
+        <div class="scard"><div class="scard-tag">Come from outside Portland</div><div class="scard-num amber" style="font-size:1.5rem">62%</div><div class="scard-note">Per HSC registry, per Mayor Dion</div></div>
       </div>
     </div>
-
-    <div class="two-col">
-      <div>
-        <h3>Demographics (2024 Maine PIT)</h3>
-        <div class="stat-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
-          <div class="stat-card">
-            <div class="stat-label">Male (unsheltered)</div>
-            <div class="stat-num" style="font-size: 1.5rem;">66.7%</div>
-            <div class="stat-note">vs. 57.4% of sheltered population</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Households w/ children</div>
-            <div class="stat-num" style="font-size: 1.5rem;">14.9%</div>
-            <div class="stat-note">Of total households in 2025 PIT count</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Chronically homeless (Portland HSC)</div>
-            <div class="stat-num" style="font-size: 1.5rem;">24%</div>
-            <div class="stat-note">At Portland's Homeless Services Center</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Placed into housing (Portland 2023)</div>
-            <div class="stat-num green" style="font-size: 1.5rem;">162</div>
-            <div class="stat-note">People successfully transitioned to housing</div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <h3>Racial disparities</h3>
-        <div class="highlight-box">
-          <strong>Black, African American, and African</strong> individuals are significantly overrepresented in Maine's unhoused population relative to their share of the statewide general population. So are <strong>American Indian or Alaska Native</strong> and <strong>Multi-Racial</strong> residents. The 2025 PIT count recorded a significant decrease in this group (from 1,141 to 757) partially attributed to successful employment and housing transitions for asylum-seeking individuals. These disparities reflect broader structural inequities in housing access.
-        </div>
-        <div class="data-note">
-          <strong>Note on asylum seekers:</strong> Portland has seen a significant influx of asylum-seeking families in recent years. In 2022, the state, City of Portland, and Catholic Charities Maine launched a transitional housing program in Saco, which served 192 households (737 people); 81% of those who left transitioned to permanent housing.
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top: 1.5rem;">
-      <h3>Historical context — pre-pandemic vs. now</h3>
-      <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr);">
-        <div class="stat-card">
-          <div class="stat-label">2020 (pre-pandemic)</div>
-          <div class="stat-num" style="font-size: 1.4rem;">1,156</div>
-          <div class="stat-note">Maine baseline</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">2022 (peak)</div>
-          <div class="stat-num red" style="font-size: 1.4rem;">4,411</div>
-          <div class="stat-note">Motel programs active</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">2023</div>
-          <div class="stat-num" style="font-size: 1.4rem;">3,726</div>
-          <div class="stat-note">Still elevated</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">2024</div>
-          <div class="stat-num" style="font-size: 1.4rem;">2,695</div>
-          <div class="stat-note">Motel funding expired</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">2025</div>
-          <div class="stat-num green" style="font-size: 1.4rem;">2,413</div>
-          <div class="stat-note">Near pre-pandemic levels</div>
-        </div>
-      </div>
-      <div class="data-note">
-        <strong>Caution:</strong> The apparent decline from 4,411 (2022) to 2,413 (2025) is substantially explained by the end of federally-funded emergency motel placements, not solely by fewer people experiencing homelessness. MaineHousing explicitly notes that the decrease "does not necessarily mean fewer people are facing homelessness." Average length of shelter stays is rising, suggesting housing exits have become harder.
+    <div>
+      <h3 class="sub">Historical trend — Maine statewide PIT</h3>
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">
+        <div class="scard"><div class="scard-tag">2020</div><div class="scard-num" style="font-size:1.3rem">1,156</div><div class="scard-note">Pre-pandemic baseline</div></div>
+        <div class="scard"><div class="scard-tag">2022 peak</div><div class="scard-num red" style="font-size:1.3rem">4,411</div><div class="scard-note">Motels active; all-time high</div></div>
+        <div class="scard"><div class="scard-tag">2023</div><div class="scard-num" style="font-size:1.3rem">3,726</div><div class="scard-note">Still elevated</div></div>
+        <div class="scard"><div class="scard-tag">2024</div><div class="scard-num" style="font-size:1.3rem">2,695</div><div class="scard-note">Motel funding expired</div></div>
+        <div class="scard"><div class="scard-tag">2025</div><div class="scard-num green" style="font-size:1.3rem">2,413</div><div class="scard-note">Near pre-pandemic levels</div></div>
+        <div class="scard"><div class="scard-tag">Units needed by 2030</div><div class="scard-num amber" style="font-size:1.3rem">84K</div><div class="scard-note">Maine housing gap study</div></div>
       </div>
     </div>
   </div>
+
+  <div class="qblock" style="margin-top:2rem">
+    <div class="qblock-text">"We are running out of runway to meet the demand. We are running out of space, our staff is stretched too thin, and we cannot expect our taxpayers to continue to shoulder the financial burden involved in providing these services where half of the unhoused come from outside of the city."</div>
+    <div class="qblock-attr">— Mayor Mark Dion, State of the City Address, Jan. 6, 2025, Portland, Maine</div>
+  </div>
+
+  <div class="dnote" style="margin-top:1.5rem">
+    <strong>Why is the number falling but the situation still dire?</strong> The 38% increase in average shelter stay length (from 8.4 days in 2023 to 11.6 days in 2024) means people are having a harder time leaving shelter for permanent housing — the exits are getting harder, even as the raw headline count drops. Maine's housing supply is short by an estimated 38,500 units today, with 84,000 additional units needed by 2030.
+  </div>
+
+  <div class="dnote blue" style="margin-top:0">
+    <strong>Racial disparities:</strong> Black, African American, and African individuals are significantly overrepresented in Maine's unhoused population relative to their general population share. American Indian/Alaska Native and Multi-Racial residents are similarly overrepresented. The 2025 count recorded a notable decrease in this group (1,141 → 757), partially attributed to successful permanent housing transitions through the Saco transitional program (81% success rate, 192 households).
+  </div>
+</div>
 </section>
 </div>
 
-<!-- SECTION 2: SHELTERS & BED CAPACITY -->
+<!-- 02 SHELTERS -->
 <div id="shelters">
-<section>
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">02</span>
-      <h2 class="section-title">Shelters & Bed Capacity</h2>
-      <span class="section-updated">Portland, ME · Current operations</span>
-    </div>
-
-    <div class="highlight-box" style="margin-bottom: 1.5rem;">
-      <strong>Capacity context:</strong> Before COVID-19, there were approximately 225 shelter beds for single adults in Portland's Bayside neighborhood. The Oxford Street Shelter has relocated to the Riverton/Riverside neighborhood, opening a new 179-bed Homeless Services Center in 2023. Most shelters across Maine report being at or near full capacity on most nights, according to Preble Street's senior leadership.
-    </div>
-
-    <table class="shelter-table">
-      <thead>
-        <tr>
-          <th>Facility</th>
-          <th>Operator</th>
-          <th>Population</th>
-          <th>Approx. Capacity</th>
-          <th>Hours</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <div class="shelter-name">Homeless Services Center (HSC)</div>
-            <div class="shelter-address">Riverside neighborhood, Portland · Former Oxford Street replacement</div>
-          </td>
-          <td>City of Portland HHS</td>
-          <td><span class="pop-badge pop-all">All adults</span></td>
-          <td>
-            <div style="font-weight: 500;">~179 beds</div>
-            <div class="cap-bar"><div class="cap-fill" style="width: 95%"></div></div>
-            <div class="source-tag">Near capacity most nights</div>
-          </td>
-          <td><span class="op-status op-24">24/7</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Opened March 2023. Shuttle to downtown. Meals by Preble Street Food Hub. Lockers, outdoor space, daytime services.</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="shelter-name">Florence House</div>
-            <div class="shelter-address">Portland — exact address varies for safety</div>
-          </td>
-          <td>Preble Street</td>
-          <td><span class="pop-badge pop-women">Women</span></td>
-          <td>
-            <div style="font-weight: 500;">~40 beds</div>
-            <div class="cap-bar"><div class="cap-fill" style="width: 90%"></div></div>
-            <div class="source-tag">Typically near full</div>
-          </td>
-          <td><span class="op-status op-24">24/7</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Permanent supportive housing + emergency shelter + Safe Haven for women experiencing chronic homelessness.</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="shelter-name">Joe Kreisler Teen Shelter</div>
-            <div class="shelter-address">Bayside, Portland</div>
-          </td>
-          <td>Preble Street</td>
-          <td><span class="pop-badge pop-youth">Youth (14–21)</span></td>
-          <td>
-            <div style="font-weight: 500;">Limited</div>
-            <div class="cap-bar"><div class="cap-fill medium" style="width: 75%"></div></div>
-            <div class="source-tag">Varies seasonally</div>
-          </td>
-          <td><span class="op-status op-night">Overnight</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Low-barrier youth shelter. Case management, education support, life skills programming.</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="shelter-name">Family Shelter</div>
-            <div class="shelter-address">Chestnut Street area, Portland</div>
-          </td>
-          <td>City of Portland HHS</td>
-          <td><span class="pop-badge pop-family">Families</span></td>
-          <td>
-            <div style="font-weight: 500;">Multiple units</div>
-            <div class="cap-bar"><div class="cap-fill medium" style="width: 80%"></div></div>
-            <div class="source-tag">High demand</div>
-          </td>
-          <td><span class="op-status op-24">24/7</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Emergency shelter for families with children. Coordinated with school district for continuity of education.</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="shelter-name">Logan Place</div>
-            <div class="shelter-address">Portland</div>
-          </td>
-          <td>Preble Street + Avesta Housing</td>
-          <td><span class="pop-badge pop-all">Chronic homeless adults</span></td>
-          <td>
-            <div style="font-weight: 500;">Permanent housing</div>
-            <div class="cap-bar"><div class="cap-fill" style="width: 100%"></div></div>
-            <div class="source-tag">Permanent — always full</div>
-          </td>
-          <td><span class="op-status op-24">24/7 support</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Site-based Housing First. Avesta owns building; Preble Street provides 24/7 on-site social work staff. First program of its kind in Maine.</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="shelter-name">Huston Commons</div>
-            <div class="shelter-address">Portland</div>
-          </td>
-          <td>Preble Street + Avesta Housing</td>
-          <td><span class="pop-badge pop-all">Chronic homeless adults</span></td>
-          <td>
-            <div style="font-weight: 500;">Permanent housing</div>
-            <div class="cap-bar"><div class="cap-fill" style="width: 100%"></div></div>
-            <div class="source-tag">Permanent — always full</div>
-          </td>
-          <td><span class="op-status op-24">24/7 support</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Site-based Housing First. Part of Preble Street's 20+ year Housing First portfolio. 30–50 additional units proposed for former Oxford Street site.</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="shelter-name">Preble Street Wellness Shelter</div>
-            <div class="shelter-address">5 Portland Street (planned)</div>
-          </td>
-          <td>Preble Street</td>
-          <td><span class="pop-badge pop-all">All adults</span></td>
-          <td>
-            <div style="font-weight: 500;">Planned</div>
-            <div class="cap-bar"><div class="cap-fill low" style="width: 20%"></div></div>
-            <div class="source-tag">Under development</div>
-          </td>
-          <td><span class="op-status op-24">Planned 24/7</span></td>
-          <td style="font-size: 12px; color: var(--ink-3);">Permanent best-practice shelter at Resource Center Day Shelter site. Individual beds; caseworker support. Response to reduction in Bayside capacity from 225 to 40 beds.</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="data-note" style="margin-top: 1rem;">
-      <strong>Capacity data note:</strong> Real-time bed availability is not publicly posted. The City of Portland has an ArcGIS Unhoused Community Dashboard. Police officers have access to real-time shelter availability data when enforcing the camping ordinance. For current shelter availability, call 2-1-1 or visit 211maine.org.
-    </div>
-
-    <div style="margin-top: 2rem;">
-      <h3>Warming Centers (Seasonal)</h3>
-      <p style="font-size: 13px; color: var(--ink-3); line-height: 1.7;">
-        During winter months, supplemental warming centers open across Portland and Cumberland County. In fall 2024, MaineHousing distributed over $2 million in grants (approved by Gov. Mills and the Legislature) for the operation of warming centers statewide. Warming center locations and hours vary — contact 2-1-1 for current information.
-      </p>
-    </div>
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">Shelters & Bed Capacity</h2>
+    <span class="sec-date">Portland, ME · Current operations</span>
   </div>
+
+  <div class="hbox">
+    <strong>Context:</strong> Before COVID-19, Portland's Bayside neighborhood held approximately 225 shelter beds for single adults. Once the City relocated the Oxford Street Shelter to the Riverton neighborhood as the new Homeless Services Center (opened March 2023 at a cost of $24–25M), the total beds for single adults in Bayside dropped from 225 to just 40. The HSC has 258 beds; it runs at roughly 245 per night. For real-time availability, call <strong>211</strong>.
+  </div>
+
+  <div style="overflow-x:auto">
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Facility</th><th>Operator</th><th>Population</th><th>Approx. Capacity</th><th>Hours</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="tbl-name">Homeless Services Center (HSC)</div>
+          <div class="tbl-addr">654 Riverside St, Riverton neighborhood, Portland, ME · LEED Gold · Solar powered</div>
+        </td>
+        <td style="font-size:12px">City of Portland HHS + partner orgs</td>
+        <td><span class="pop-badge pop-all">All adults</span></td>
+        <td>
+          <div style="font-weight:600">258 beds</div>
+          <div class="bar"><div class="bar-fill" style="width:95%"></div></div>
+          <div class="src-tag">~245 nightly · near full</div>
+        </td>
+        <td><span class="op op-24">24 / 7</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Replaced Oxford St. Shelter. 52,000 sq ft single-story. Commercial kitchen, health clinic, outdoor space with garden beds. Designed by Winton Scott Architects, built by Cianbro. Shuttle to downtown. Partners: Preble Street, Amistad, Opportunity Alliance, Greater Portland Health on-site.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="tbl-name">Florence House</div>
+          <div class="tbl-addr">Portland, ME (address withheld for resident safety)</div>
+        </td>
+        <td style="font-size:12px">Preble Street + Avesta Housing</td>
+        <td><span class="pop-badge pop-women">Women</span></td>
+        <td>
+          <div style="font-weight:600">~40 beds</div>
+          <div class="bar"><div class="bar-fill" style="width:92%"></div></div>
+          <div class="src-tag">Near full most nights</div>
+        </td>
+        <td><span class="op op-24">24 / 7</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Site-based Housing First. Permanent supportive housing + emergency shelter + Safe Haven for women with chronic homelessness. On-site 24/7 social work staff. Opened 2010 — Maine's 2nd Housing First building.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="tbl-name">Joe Kreisler Teen Shelter</div>
+          <div class="tbl-addr">Bayside, Portland, ME</div>
+        </td>
+        <td style="font-size:12px">Preble Street</td>
+        <td><span class="pop-badge pop-youth">Youth 14–21</span></td>
+        <td>
+          <div style="font-weight:600">Limited</div>
+          <div class="bar"><div class="bar-fill med" style="width:75%"></div></div>
+          <div class="src-tag">Varies seasonally</div>
+        </td>
+        <td><span class="op op-nt">Overnight</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Low-barrier youth shelter. Case management, education support, life skills programming. Remains in Bayside after HSC relocation.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="tbl-name">City of Portland Family Shelter</div>
+          <div class="tbl-addr">Chestnut Street area, Portland, ME</div>
+        </td>
+        <td style="font-size:12px">City of Portland HHS</td>
+        <td><span class="pop-badge pop-family">Families</span></td>
+        <td>
+          <div style="font-weight:600">Multiple units</div>
+          <div class="bar"><div class="bar-fill med" style="width:80%"></div></div>
+          <div class="src-tag">High demand year-round</div>
+        </td>
+        <td><span class="op op-24">24 / 7</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Emergency shelter for families with children. Coordinated with Portland Public Schools for continuity of education. One of three shelters Mayor Dion cited as serving 600+ people per night on average.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="tbl-name">Logan Place</div>
+          <div class="tbl-addr">Portland, ME</div>
+        </td>
+        <td style="font-size:12px">Preble Street + Avesta Housing</td>
+        <td><span class="pop-badge pop-all">Chronically homeless adults</span></td>
+        <td>
+          <div style="font-weight:600">Permanent housing</div>
+          <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="src-tag">Permanent — always full</div>
+        </td>
+        <td><span class="op op-24">24 / 7 support</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Maine's first Housing First building, opened 2005. Avesta owns; Preble Street provides 24/7 on-site social work staff. No preconditions for tenancy.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="tbl-name">Huston Commons</div>
+          <div class="tbl-addr">Portland, ME</div>
+        </td>
+        <td style="font-size:12px">Preble Street + Avesta Housing</td>
+        <td><span class="pop-badge pop-all">Chronically homeless adults</span></td>
+        <td>
+          <div style="font-weight:600">Permanent housing</div>
+          <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="src-tag">Permanent — always full</div>
+        </td>
+        <td><span class="op op-24">24 / 7 support</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Opened 2017. Third Preble Street / Avesta Housing First building. 30–50 additional units now planned at former Oxford Street site; construction expected to begin late 2025.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="tbl-name">Preble Street Wellness Shelter</div>
+          <div class="tbl-addr">5 Portland Street (current Resource Center site) · planned</div>
+        </td>
+        <td style="font-size:12px">Preble Street</td>
+        <td><span class="pop-badge pop-all">All adults</span></td>
+        <td>
+          <div style="font-weight:600">Planned · TBD</div>
+          <div class="bar"><div class="bar-fill lo" style="width:15%"></div></div>
+          <div class="src-tag">Under development</div>
+        </td>
+        <td><span class="op op-plan">Planned 24 / 7</span></td>
+        <td style="font-size:11.5px;color:var(--ink-3)">Permanent best-practice shelter at Preble Street's founding Bayside location. Individual beds (not floor mats). Full-time social work staff on-site. Response to reduction of Bayside single-adult beds from 225 → 40 following HSC relocation.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="dnote" style="margin-top:1rem">
+    <strong>Real-time availability:</strong> The City of Portland maintains an Unhoused Community Dashboard (ArcGIS). Portland police officers have real-time shelter data when enforcing the camping ordinance — city policy directs them not to cite individuals when no beds are available. For current bed availability: call <strong>211</strong> or visit 211maine.org.
+  </div>
+  <div class="dnote blue" style="margin-top:0">
+    <strong>Warming centers (seasonal):</strong> MaineHousing distributed $2M+ in warming center grants for winter 2024–2025, authorized by Governor Mills and the Maine Legislature. Locations and hours vary by year. Contact 2-1-1 for current information.
+  </div>
+</div>
 </section>
 </div>
 
-<!-- SECTION 3: TRENDS & DATA -->
-<div id="trends">
-<section>
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">03</span>
-      <h2 class="section-title">Trends & Data</h2>
-      <span class="section-updated">MaineHousing PIT Reports 2020–2025</span>
-    </div>
-
-    <div class="chart-row">
-      <div class="chart-box">
-        <div class="chart-title">Maine statewide PIT count (all categories)</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:#c0392b"></span>Unsheltered</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#2563a8"></span>In shelters</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#1e6b42"></span>Transitional housing</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#925900"></span>Emergency motels</span>
-        </div>
-        <div style="position: relative; width: 100%; height: 260px;">
-          <canvas id="pitTrend" role="img" aria-label="Stacked bar chart showing Maine statewide point-in-time count from 2020 to 2025 broken into unsheltered, sheltered, transitional housing, and emergency motel categories">PIT count data 2020-2025.</canvas>
-        </div>
+<!-- 03 TRENDS & CHARTS -->
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">Trends & Data</h2>
+    <span class="sec-date">MaineHousing PIT Reports 2020–2025</span>
+  </div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <div class="chart-label">Maine statewide PIT count by category, 2020–2025</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-sw" style="background:#b83228"></span>Unsheltered</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#1a56a0"></span>In shelters</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#1a5e3a"></span>Transitional</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#8a5200"></span>Emergency motels</span>
       </div>
-
-      <div class="chart-box">
-        <div class="chart-title">Average shelter stay length (days)</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:#925900"></span>Avg. days per stay</span>
-        </div>
-        <div style="position: relative; width: 100%; height: 260px;">
-          <canvas id="stayLength" role="img" aria-label="Bar chart showing average shelter stay length from 2020 to 2024, rising from around 8 days to 11.6 days">Average stay: 8.4 days (2023) → 11.6 days (2024).</canvas>
-        </div>
+      <div style="position:relative;width:100%;height:250px">
+        <canvas id="pitTrend" role="img" aria-label="Stacked bar chart of Maine PIT count 2020-2025 by category"></canvas>
       </div>
     </div>
-
-    <div class="chart-row">
-      <div class="chart-box">
-        <div class="chart-title">2024 shelter breakdown by category</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:#2563a8"></span>Shelters 49.8%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#1e6b42"></span>Transitional 27.2%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#925900"></span>Motels 12.9%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#c0392b"></span>Unsheltered 10.1%</span>
-        </div>
-        <div style="position: relative; width: 100%; height: 260px;">
-          <canvas id="breakdown2024" role="img" aria-label="Doughnut chart of 2024 Maine PIT count breakdown: 1342 sheltered, 732 transitional, 348 motels, 273 unsheltered">2024 breakdown of 2695 total: 1342 sheltered, 732 transitional housing, 348 emergency motels, 273 unsheltered.</canvas>
-        </div>
-      </div>
-
-      <div class="chart-box">
-        <div class="chart-title">Affordable housing units completed (Maine)</div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:#1e6b42"></span>Units built</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#9FE1CB; border: 1px dashed #1e6b42;"></span>Projected</span>
-        </div>
-        <div style="position: relative; width: 100%; height: 260px;">
-          <canvas id="housingUnits" role="img" aria-label="Bar chart of affordable housing units completed and projected in Maine from 2023 to 2025">775 units completed in 2024; 727 projected for 2025.</canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="two-col" style="margin-top: 0.5rem;">
-      <div>
-        <h3>Key findings from MaineHousing 2025 report</h3>
-        <ul style="font-size: 13px; color: var(--ink-3); line-height: 2; padding-left: 1.2rem;">
-          <li>Total 2025 PIT count: <strong style="color: var(--ink-2);">2,413</strong> — down 282 (10%) from 2024</li>
-          <li>Families with children: <strong style="color: var(--ink-2);">14.9%</strong> of all households; &lt;0.4% unsheltered</li>
-          <li>Veteran count increased ~10% between 2022–2025</li>
-          <li>Catholic Charities/Saco transitional program: <strong style="color: var(--ink-2);">81%</strong> of leavers housed permanently</li>
-          <li>775 affordable units built in 2024; 727 more projected for 2025</li>
-          <li>Average stay length rose <strong style="color: var(--accent);">38%</strong> in 2024 — a "concerning shift"</li>
-          <li>Shelters across the state filling quickly as capacity increases</li>
-        </ul>
-      </div>
-      <div>
-        <h3>What the data does NOT capture</h3>
-        <div class="data-note">
-          <strong>"Hidden homelessness"</strong> — people doubled-up in overcrowded housing, couch-surfing, or in informal arrangements — is not counted in PIT totals. HUD does not classify most of these situations as homelessness. MaineHousing cautions that the sharp numerical drop from 2022 to 2025 significantly reflects changes in what is <em>counted</em>, not only changes in who is <em>homeless</em>. The rising average length of stay suggests people are having a harder time exiting homelessness, even as headline numbers fall.
-        </div>
+    <div class="chart-box">
+      <div class="chart-label">Average shelter stay length — days</div>
+      <div class="legend"><span class="leg-item"><span class="leg-sw" style="background:#8a5200"></span>Avg. days per shelter stay</span></div>
+      <div style="position:relative;width:100%;height:250px">
+        <canvas id="stayLen" role="img" aria-label="Bar chart: average shelter stay rising to 11.6 days in 2024"></canvas>
       </div>
     </div>
   </div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <div class="chart-label">2024 Maine PIT — share by category</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-sw" style="background:#1a56a0"></span>Shelters 49.8%</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#1a5e3a"></span>Transitional 27.2%</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#8a5200"></span>Motels 12.9%</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#b83228"></span>Unsheltered 10.1%</span>
+      </div>
+      <div style="position:relative;width:100%;height:250px">
+        <canvas id="donut2024" role="img" aria-label="Doughnut chart of 2024 Maine PIT breakdown"></canvas>
+      </div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-label">Affordable housing units completed — Maine</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-sw" style="background:#1a5e3a"></span>Completed</span>
+        <span class="leg-item"><span class="leg-sw" style="background:#9FE1CB"></span>Projected 2025</span>
+      </div>
+      <div style="position:relative;width:100%;height:250px">
+        <canvas id="housingUnits" role="img" aria-label="Bar chart: 775 units completed 2024, 727 projected 2025"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div>
+      <h3 class="sub">Key figures — MaineHousing 2025</h3>
+      <ul style="font-size:13px;color:var(--ink-3);line-height:2.1;padding-left:1.2rem">
+        <li>2025 PIT total: <strong style="color:var(--ink-2)">2,413</strong> — down 282 (10%) from 2024</li>
+        <li>Families with children: <strong style="color:var(--ink-2)">14.9%</strong> of all households; &lt;0.4% unsheltered</li>
+        <li>Veteran count increased ~10% from 2022–2025 statewide</li>
+        <li>Saco transitional program (Catholic Charities Maine): <strong style="color:var(--ink-2)">81%</strong> permanent housing success rate</li>
+        <li>775 affordable housing units built in Maine in 2024; 727 more projected for 2025</li>
+        <li>Avg. shelter stay rose <strong style="color:var(--red)">38%</strong> in 2024 — flagged as "concerning shift"</li>
+        <li>Maine housing demand outpaces supply by <strong style="color:var(--red)">38,500 units</strong> currently</li>
+        <li>Portland issued 4,500 building permits in 2024 — highest in years (Mayor Dion, Jan. 2025)</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="sub">What the data does not capture</h3>
+      <div class="dnote">
+        <strong>"Hidden homelessness"</strong> — people doubled-up in overcrowded housing, couch-surfing, or in informal motel arrangements — is not counted in PIT totals. MaineHousing explicitly warns that the headline decline from 4,411 (2022) to 2,413 (2025) largely reflects <em>what is counted changing</em> (end of motel programs), not only fewer homeless people. The rising average shelter stay — from 8.4 to 11.6 days — suggests exits from homelessness are becoming harder, not easier.
+      </div>
+      <div class="dnote blue" style="margin-top:0">
+        <strong>Preble Street on 2025 federal risk:</strong> In 2025, Preble Street stated that 1,200 Mainers are at risk of re-entering homelessness due to anticipated changes in federal housing and social services funding, including proposed HUD Continuum of Care grant cuts and pauses to federal heating assistance (LIHEAP). Governor Mills issued a warning about this risk in November 2025.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 04 PHOTOS -->
+<div id="photos">
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">Places & Spaces</h2>
+    <span class="sec-date">Visual reference · Portland, Maine</span>
+  </div>
+
+  <p class="gallery-intro">
+    These illustrated tiles reference key locations, organizations, and scenes in Portland, Maine's homelessness response. Photography of unhoused individuals without consent is an ethical concern — this gallery focuses on the physical and institutional landscape: where services are, what the infrastructure looks like, and who is doing the work.
+  </p>
+
+  <div class="photo-note">
+    <strong>A note on photos:</strong> News photographs of Portland, Maine's homelessness crisis — including Bayside encampments, the new HSC building, Preble Street volunteers, and outreach workers — have been published by the Portland Press Herald (Brianna Soukup, Ben McCanna), Maine Public Radio, and News Center Maine. Originals can be found at pressherald.com, mainepublic.org, and newscentermaine.com. This site reproduces factual descriptions rather than copyrighted images to respect those rights.
+  </div>
+
+  <div class="photo-mosaic">
+
+    <div class="photo-tile tall tile-1">
+      <div class="photo-visual">
+        <div class="photo-icon">🏢</div>
+        <div style="font-size:11px;opacity:.7">654 Riverside St<br>Riverton, Portland ME</div>
+      </div>
+      <div class="photo-caption-bar">
+        <div class="photo-caption">Homeless Services Center (HSC) — The $24M replacement for the Oxford Street Shelter. 52,000 sq ft, LEED Gold certified, solar-powered. Designed by Winton Scott Architects, built by Cianbro. Opened March 2023. Features individual bed clusters with charging stations, private shower stalls, health clinic, commercial kitchen, and community garden.</div>
+        <div class="photo-credit">Opened March 22, 2023 · Portland HHS · Riverton neighborhood</div>
+      </div>
+    </div>
+
+    <div class="photo-tile tile-2">
+      <div class="photo-visual">
+        <div class="photo-icon">⛺</div>
+        <div style="font-size:11px;opacity:.7">Bayside Trail &amp;<br>surrounding streets</div>
+      </div>
+      <div class="photo-caption-bar">
+        <div class="photo-caption">Bayside encampments — For years the Bayside neighborhood near Back Cove held Portland's most visible outdoor encampments. The city removed 809 tents in 2024. Mayor Dion reported in late 2025 that no large encampments remain, though unsheltered individuals continue to be present throughout the city.</div>
+        <div class="photo-credit">Photo coverage: Portland Press Herald, Maine Public Radio · 2023–2025</div>
+      </div>
+    </div>
+
+    <div class="photo-tile tile-3">
+      <div class="photo-visual">
+        <div class="photo-icon">🍲</div>
+        <div style="font-size:11px;opacity:.7">Preble Street<br>Food Security Hub</div>
+      </div>
+      <div class="photo-caption-bar">
+        <div class="photo-caption">Preble Street Food Security Hub — Over 1,000,000 meals served in 2023 alone. The hub operates a commercial kitchen and mobile street outreach. The blue Preble Street van is a familiar sight in Portland, distributing meals and connecting people to services on the street.</div>
+        <div class="photo-credit">Preble Street · preblestreet.org · Est. 1975</div>
+      </div>
+    </div>
+
+    <div class="photo-tile wide tile-4">
+      <div class="photo-visual">
+        <div class="photo-icon">🚐</div>
+        <div style="font-size:11px;opacity:.7">Street Outreach Collaborative — mobile services van</div>
+      </div>
+      <div class="photo-caption-bar">
+        <div class="photo-caption">Preble Street's Street Outreach Collaborative (SOC) — Launched during COVID-19 when indoor services were restricted, the SOC now operates permanently. The Preble Street-branded van drives through Portland neighborhoods delivering meals, basic needs, and case management to people living unsheltered. It is the primary point of contact for individuals who avoid congregate shelters. "It often starts with a meal, or a clean pair of socks."</div>
+        <div class="photo-credit">Preble Street Street Outreach Collaborative · PBS NewsHour featured, 2020</div>
+      </div>
+    </div>
+
+    <div class="photo-tile tile-5">
+      <div class="photo-visual">
+        <div class="photo-icon">🏛️</div>
+        <div style="font-size:11px;opacity:.7">Portland City Hall<br>389 Congress St</div>
+      </div>
+      <div class="photo-caption-bar">
+        <div class="photo-caption">Portland City Hall — Where Mayor Mark Dion's administration coordinates the city's homeless services response. The City Council chambers have been the site of unanimous votes on shelter funding, zoning debates, and the camping ordinance. Dion took office January 6, 2024 after serving as Cumberland County Sheriff and Maine State Legislator.</div>
+        <div class="photo-credit">City of Portland · Mayor Mark Dion (inaugurated Jan. 6, 2024)</div>
+      </div>
+    </div>
+
+    <div class="photo-tile tile-6">
+      <div class="photo-visual">
+        <div class="photo-icon">🏠</div>
+        <div style="font-size:11px;opacity:.7">Logan Place · Florence House<br>Huston Commons · Portland ME</div>
+      </div>
+      <div class="photo-caption-bar">
+        <div class="photo-caption">Housing First buildings — Logan Place (2005), Florence House (2010), and Huston Commons (2017) are Portland's three permanent, site-based Housing First buildings — all operated by Preble Street with Avesta Housing as property owner. A fourth building is planned at the former Oxford Street Shelter site. These buildings provide permanent housing with no preconditions, plus on-site social work staff 24 hours a day.</div>
+        <div class="photo-credit">Avesta Housing + Preble Street · 20+ years of Housing First in Portland, ME</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="three-col" style="margin-top:.5rem">
+    <div class="dnote green" style="margin:0">
+      <strong>HSC by the numbers:</strong> 52,000 sq ft · 258 beds · LEED Gold · 107.8 kW solar array · electric heating and cooling · Fossil-fuel free · $24M total cost ($6.5M upfront from City; $3.5M ARPA; $3M Cumberland County ARPA; balance financed by Developers Collaborative). City has option to purchase for $1 after 25 years.
+    </div>
+    <div class="dnote" style="margin:0">
+      <strong>On the HSC location:</strong> The Riverton neighborhood is approximately 20 minutes from downtown Portland by car. A city-operated shuttle connects residents to downtown, where services, appointments, and day programs are concentrated. Some former guests have raised access concerns; the shuttle was cited as critical by those involved in the opening.
+    </div>
+    <div class="dnote blue" style="margin:0">
+      <strong>See for yourself:</strong> Portland Press Herald photographer Brianna Soukup documented the HSC opening extensively. Maine Public Radio's photo archive covers Bayside encampments, outreach workers, and shelter conditions from 2022–2025. Links: pressherald.com · mainepublic.org · preblestreet.org/news
+    </div>
+  </div>
+</div>
 </section>
 </div>
 
-<!-- SECTION 4: POLICY -->
+<!-- 05 POLICY -->
 <div id="policy">
-<section>
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">04</span>
-      <h2 class="section-title">Policy & Legislative Timeline</h2>
-      <span class="section-updated">Portland City Council · Maine Legislature</span>
-    </div>
-
-    <div class="highlight-box">
-      This section documents policy actions as factual events. Status labels (Passed, Active, Proposed, etc.) are descriptive, not evaluative. Where policies are contested, competing viewpoints are noted.
-    </div>
-
-    <div class="policy-track">
-
-      <div class="policy-item">
-        <div class="policy-date">Jan 2025<br>Maine Legislature</div>
-        <div class="policy-body">
-          <div class="policy-title">Hotel Booking Fee to Fund Homeless Shelters (LD/HP 968)</div>
-          <div class="policy-desc">A bill introduced in the 132nd Maine Legislature (First Special Session, 2025) would impose a fee on hotel, short-term rental, and RV camping reservations to generate revenue for operating homeless shelters. Sponsored by Rep. Gattine of Westbrook and Sen. Tipping of Penobscot, among others.</div>
-          <span class="policy-tag tag-proposed">Proposed</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Nov 2025<br>City of Portland, ME</div>
-        <div class="policy-body">
-          <div class="policy-title">Public Camping Ordinance Enforcement Resumed</div>
-          <div class="policy-desc">Mayor Keith Wilson resumed enforcement of Portland's public camping ordinance on November 1, 2025. Officers can issue citations (up to $100 fine or 7 days in jail) to individuals camping in public spaces when "reasonable alternate shelter" is available. Officers have real-time shelter availability data and are directed not to cite individuals if no shelter space exists. The stated goal is to redirect people toward shelter and services. Advocates raised concerns about penalties, court system barriers, and shelter conditions that make congregate settings difficult for some individuals.</div>
-          <span class="policy-tag tag-active">Active enforcement</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Apr–May 2025<br>Maine Legislature</div>
-        <div class="policy-body">
-          <div class="policy-title">Bill to Protect Belongings During Encampment Sweeps</div>
-          <div class="policy-desc">A bill advanced in the Maine Legislature requiring state and local governments to provide notice and hold hearings before removing a homeless person's belongings from public property. Exceptions include items reasonably believed abandoned or posing health/safety risks. The bill was described as protecting civil rights and ensuring procedural protections equivalent to those given to housed residents' property.</div>
-          <span class="policy-tag tag-proposed">Advanced in committee (2025)</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Feb 2025<br>City of Portland, ME</div>
-        <div class="policy-body">
-          <div class="policy-title">Camping Ordinance Enforcement Paused</div>
-          <div class="policy-desc">Mayor Wilson's administration paused enforcement of the camping ordinance in February 2025, between the end of the prior mayor's enforcement period and a new enforcement strategy. The pause ended in November 2025.</div>
-          <span class="policy-tag tag-blocked">Enforcement paused</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Fall 2024<br>MaineHousing + Gov. Mills</div>
-        <div class="policy-body">
-          <div class="policy-title">$2M+ Warming Center Grants</div>
-          <div class="policy-desc">Governor Janet Mills and the Maine Legislature approved over $2 million in grants distributed by MaineHousing for the operation of warming centers during the 2024–2025 winter season, following the expiration of pandemic-era emergency shelter funding.</div>
-          <span class="policy-tag tag-passed">Passed + funded</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Sept 2024<br>City of Portland, ME</div>
-        <div class="policy-body">
-          <div class="policy-title">Initial Enforcement of May 2024 Camping Ordinance</div>
-          <div class="policy-desc">Enforcement began in September 2024. Under Mayor Ted Wheeler, enforcement was limited and reserved for cases where a person simultaneously violated "manner" restrictions and refused an offer of shelter. No sweeping enforcement occurred.</div>
-          <span class="policy-tag tag-active">Enforcement began</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">May 8, 2024<br>Portland City Council</div>
-        <div class="policy-body">
-          <div class="policy-title">Revised Public Camping Ordinance — Unanimously Passed</div>
-          <div class="policy-desc">The Portland City Council unanimously passed Mayor Ted Wheeler's revised camping ordinance. It replaced a 2023 ordinance that was legally blocked. The new ordinance removed time-and-place restrictions, retaining only "manner" restrictions (e.g., no gas heaters, no blocking access, no obstruction of right-of-way) and prohibiting camping when "reasonable alternate shelter" is available. The council also required police to publish demographic data on enforcement actions, and directed regular policy review.</div>
-          <span class="policy-tag tag-passed">Passed unanimously</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Nov 2023<br>Federal Court</div>
-        <div class="policy-body">
-          <div class="policy-title">2023 Camping Ordinance (TPM) Legally Blocked</div>
-          <div class="policy-desc">Portland's prior "time, place, and manner" (TPM) camping ordinance was legally challenged by five homeless Portlanders and subsequently blocked by a court injunction. The City declined to appeal due to the time involved, prompting the 2024 rewrite.</div>
-          <span class="policy-tag tag-blocked">Legally blocked</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Jun 2024<br>U.S. Supreme Court</div>
-        <div class="policy-body">
-          <div class="policy-title">City of Grants Pass v. Johnson — National Ruling</div>
-          <div class="policy-desc">The U.S. Supreme Court ruled that cities may penalize people for sleeping or camping on public property without violating the Eighth Amendment's prohibition on cruel and unusual punishment, even if no shelter is available. This ruling, while from Oregon, directly affects how Maine cities can legally regulate camping. Maine also has a state law limiting such penalties when no shelter space is available — any changes to that would require state legislative action.</div>
-          <span class="policy-tag tag-passed">Federal ruling (impacts Maine)</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">Mar 2023<br>City of Portland</div>
-        <div class="policy-body">
-          <div class="policy-title">New Homeless Services Center Opens (Riverton neighborhood)</div>
-          <div class="policy-desc">The City opened its new Homeless Services Center in the Riverton neighborhood, replacing the Oxford Street Shelter. The facility provides 179 new beds, daytime services, lockers, outdoor space, and is served by a shuttle to downtown Portland. Meals are provided by Preble Street's Food Security Hub.</div>
-          <span class="policy-tag tag-passed">Opened</span>
-        </div>
-      </div>
-
-      <div class="policy-item">
-        <div class="policy-date">2022–ongoing<br>State + City + Nonprofits</div>
-        <div class="policy-body">
-          <div class="policy-title">Asylum Seeker Transitional Housing Program — Saco</div>
-          <div class="policy-desc">The State of Maine, City of Portland, and Catholic Charities Maine launched a transitional housing program for asylum-seeking families in Saco. As of late 2024, the program had served 192 households (737 individuals). 81% of those who left transitioned to permanent housing. The program is expected to close in September 2025. Nine of 25 remaining families have signed leases.</div>
-          <span class="policy-tag tag-active">Winding down (2025)</span>
-        </div>
-      </div>
-
-    </div>
-
-    <div style="margin-top: 2rem;">
-      <h3>Currently debated / under discussion</h3>
-      <div class="data-note">
-        <strong>Federal funding uncertainty:</strong> Governor Mills warned in November 2025 that over 1,200 at-risk Mainers could lose housing under proposed federal changes. Federal heating assistance programs (LIHEAP) were paused, with MaineHousing providing stopgap funds. The future of HUD and federal homelessness grants under ongoing federal budget negotiations remains a major uncertainty for Portland's service providers. Preble Street issued a statement in 2025 noting 1,200 Mainers at risk of re-entering homelessness due to anticipated federal changes.
-      </div>
-      <div class="data-note" style="margin-top: 0.75rem;">
-        <strong>Site-based Housing First expansion:</strong> Maine's 132nd Legislature included funding to support the creation of more Site-based Housing First programs across the state. Avesta Housing has secured an option on the former Oxford Street shelter site for a planned 30–50 unit mixed-income development with permanent supportive housing.
-      </div>
-      <div class="data-note" style="margin-top: 0.75rem;">
-        <strong>Maine state camping/encampment law:</strong> Maine has a state statute limiting cities from penalizing people for sleeping outside when no shelter is available. Some state lawmakers have signaled interest in revisiting this law following the Grants Pass Supreme Court decision. No legislation has passed as of 2025.
-      </div>
-    </div>
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <h2 class="sec-title">Policy & Local Actions</h2>
+    <span class="sec-date">Portland City Hall · Mayor Dion · Maine DHHS · 2022–2025</span>
   </div>
+
+  <div class="hbox">All policy events below are documented facts from Maine sources only. Status tags are descriptive. Where contested, both sides are noted factually.</div>
+
+  <div class="timeline">
+
+    <div class="t-item">
+      <div class="t-date">May 2025<br>City of Portland<br>v. Maine DHHS</div>
+      <div class="t-body">
+        <div class="t-title">Portland Sues Maine DHHS Over Shelter Funding Cut</div>
+        <div class="t-desc">Mayor Dion announced that the City of Portland filed suit against the Maine Department of Health and Human Services over General Assistance Proposed Rule No. 26. Under the rule, the state would reimburse cities $48/night per shelter guest — a reimbursement of 70% — down from Portland's previous rate of $84/night. Dion says this cuts $4.4 million from Portland's shelter budget. "This isn't trimming your budget or tightening your belt a little bit — this is cutting us in half," Dion said. "We're going to court." 62% of HSC guests come from communities outside Portland; Dion argues the shelter provides a statewide need and should receive corresponding state support. DHHS spokesperson Lindsay Hammes said the rule "reasserts its longstanding practice for shelter reimbursement."</div>
+        <span class="tag tag-active">Active litigation</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">Jan 2025<br>Mayor Dion<br>State of the City</div>
+      <div class="t-body">
+        <div class="t-title">Dion: Funding Crisis Warning, Calls for State Coordination Office</div>
+        <div class="t-desc">In his Jan. 6, 2025 State of the City address, Mayor Dion declared Portland is "running out of runway." He called on the Portland state delegation to press Augusta for more funding. He reported Portland sheltered 2,000 people in 2024 with 600 beds filled nightly across three shelters. Dion also called for a dedicated state office to coordinate homelessness data and resources across municipalities — noting there is a statewide council of mayors but no mechanism to share shelter resources between cities. He also asked the City Council to reassess the "Green New Deal" inclusionary zoning ordinance, arguing the $178,000/unit fee may be suppressing housing construction.</div>
+        <span class="tag tag-active">Ongoing priority</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">Nov 2025<br>Mayor Dion<br>News Center ME</div>
+      <div class="t-body">
+        <div class="t-title">Dion on Homelessness, Addiction, and Conditional Housing</div>
+        <div class="t-desc">In a November 2025 interview with News Center Maine, Mayor Dion described his view that drug addiction is "the overriding cause" of homelessness in Portland. He expressed support for "conditional housing" — requiring individuals to take steps toward rehabilitation as a condition of placement. He noted the HSC is near capacity every night with all but 10–15 of 258 beds occupied. He reiterated his frustration that surrounding communities contribute little to Portland's shelter costs. He also expressed concern about panhandling near busy intersections, calling it "a fatality waiting to happen." Portland's large encampments are gone, but unsheltered individuals remain present throughout the city daily.</div>
+        <span class="tag tag-debate">Ongoing policy view</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">Nov 2025<br>Gov. Mills<br>Maine</div>
+      <div class="t-body">
+        <div class="t-title">Warning: 1,200+ Mainers at Risk Under Federal Changes</div>
+        <div class="t-desc">Governor Janet Mills warned that proposed federal budget changes could cause over 1,200 at-risk Mainers to lose housing. Federal LIHEAP heating assistance was paused; MaineHousing used state funds as a stopgap. Preble Street issued a parallel statement citing 1,200 Mainers at risk of re-entering homelessness due to expected changes in federal CoC grants, which fund permanent supportive housing for roughly 218,000 people nationally.</div>
+        <span class="tag tag-debate">Ongoing uncertainty</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">2024<br>City of Portland<br>Park Rangers + Police</div>
+      <div class="t-body">
+        <div class="t-title">809 Tents Removed; Camping Ordinance Enforcement (Maine Law)</div>
+        <div class="t-desc">The City of Portland removed 809 tents from public land in 2024, carried out by park rangers and police officers providing advance notice. Portland's camping ordinance — passed unanimously by the Portland, Maine City Council — prohibits public camping when "reasonable alternate shelter" is available. Maine state law separately restricts municipalities from penalizing outdoor sleeping when shelter is unavailable. City policy directs officers not to cite individuals if no beds are open. Mayor Dion reported in late 2025 that no large encampments remain in Portland, though unsheltered individuals are still present throughout the city. Data has shown that tent removals often relocate people rather than moving them into shelter.</div>
+        <span class="tag tag-active">Active enforcement</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">2023<br>ACLU of Maine</div>
+      <div class="t-body">
+        <div class="t-title">Know Your Rights — Portland Encampment Protections</div>
+        <div class="t-desc">The ACLU of Maine publishes "Know Your Rights" materials documenting Portland-specific protections for unhoused individuals during encampment sweeps: 24-hour advance written notice required; personal property must be stored for at least one week; property cannot be destroyed unless abandoned or a health/safety hazard; if all Portland emergency shelters are full, the city cannot remove campsites except for immediate hazards or obstruction. These rights apply in Portland, Maine specifically and may differ in other Maine municipalities.</div>
+        <span class="tag tag-active">Active rights framework</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">Mar 2023<br>City of Portland</div>
+      <div class="t-body">
+        <div class="t-title">Homeless Services Center Opens — Riverton Neighborhood</div>
+        <div class="t-desc">The City opened the $24–25M Homeless Services Center at 654 Riverside Street in Portland's Riverton neighborhood, replacing the former Oxford Street Shelter in Bayside. Designed by Winton Scott Architects, built by Cianbro. 258 beds. LEED Gold certified, solar powered, fossil-fuel free. Individual bed clusters with charging stations, private shower stalls, commercial kitchen, health clinic, community garden. Partner organizations on-site: Preble Street, Amistad, Opportunity Alliance, Greater Portland Health. A shuttle connects guests to downtown Portland.</div>
+        <span class="tag tag-pass">Opened March 2023</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">2022–2025<br>State + City + Catholic Charities ME</div>
+      <div class="t-body">
+        <div class="t-title">Asylum Seeker Transitional Housing — Saco, Maine</div>
+        <div class="t-desc">A joint program of the State of Maine, City of Portland, and Catholic Charities Maine serving asylum-seeking families at a Saco hotel. Served 192 households (737 individuals). 81% of those who completed the program transitioned to permanent housing. The program wound down in fall 2025. Widely cited as a successful model of coordinated government-nonprofit transitional housing. Nine of 25 remaining families signed leases as the program closed.</div>
+        <span class="tag tag-pass">Concluded — strong outcomes</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">Jul 2023<br>Gov. Mills<br>Maine Legislature</div>
+      <div class="t-body">
+        <div class="t-title">Site-Based Housing First Funding Signed Into Maine Budget</div>
+        <div class="t-desc">Governor Janet Mills signed a supplemental budget package including funding to support the creation of 12–15 new Site-based Housing First programs across Maine, modeled on Preble Street's Logan Place, Florence House, and Huston Commons. Avesta Housing subsequently secured a purchase option on the former Oxford Street Shelter site for a planned 30–50 unit mixed-income permanent supportive housing development.</div>
+        <span class="tag tag-pass">Signed into law</span>
+      </div>
+    </div>
+
+    <div class="t-item">
+      <div class="t-date">Jun 2024<br>U.S. Supreme Court</div>
+      <div class="t-body">
+        <div class="t-title">City of Grants Pass v. Johnson — National Ruling</div>
+        <div class="t-desc">The U.S. Supreme Court ruled that cities may impose civil or criminal penalties for sleeping or camping in public without violating the Eighth Amendment — even if no shelter is available. This ruling is from a case originating in Oregon and does not directly change Maine law. Maine has a separate state statute limiting municipalities from penalizing outdoor sleeping when no shelter is available. Any change to that Maine law would require action by the Maine Legislature. Some Maine lawmakers have signaled interest in revisiting the state law; no legislation has passed as of 2025.</div>
+        <span class="tag tag-pass">Federal ruling — Maine law still limits enforcement</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 </section>
 </div>
 
-<!-- SECTION 5: ORGANIZATIONS -->
+<!-- 06 BILLS -->
+<div id="bills">
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <h2 class="sec-title">Bills, Legislation & Policy Debates</h2>
+    <span class="sec-date">Maine 132nd Legislature · 2024–2025 · Federal</span>
+  </div>
+
+  <div class="hbox">All bills below are documented Maine or federal legislation. The "policy approaches being debated" subsection presents approaches from other jurisdictions that have been proposed or studied — included for factual context, not as endorsements.</div>
+
+  <h3 class="sub" style="margin-bottom:1rem">Maine state legislation</h3>
+  <div class="bills-wrap">
+  <table class="btbl">
+    <thead>
+      <tr><th>Bill</th><th>Title</th><th>What it does</th><th>Status</th><th>Portland connection</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="bill-id" style="color:var(--blue)">LD 1476</div></td>
+        <td style="font-weight:600">Hotel Booking Fee for Shelters</td>
+        <td style="font-size:12px;color:var(--ink-3)">Would have imposed a fee on hotel, short-term rental (e.g. Airbnb), and RV camping reservations to fund homeless shelter operations statewide. Sponsored by Rep. Gattine, Rep. Lookner (Portland), Rep. Malon, Sen. Beebe-Center, and others.</td>
+        <td><span class="tag tag-dead">Killed — House voted 92–51, June 2025</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Mayor Dion testified in support May 2, 2025, calling it "fair, innovative, and fiscally responsible" and arguing tourism revenue should offset humanitarian costs borne disproportionately by Portland.</td>
+      </tr>
+      <tr>
+        <td><div class="bill-id" style="color:var(--blue)">LD 1287</div></td>
+        <td style="font-weight:600">Housing Stability Support Program</td>
+        <td style="font-size:12px;color:var(--ink-3)">Establishes a Housing Stability Support Program within MaineHousing. Provides up to $300/month rental assistance (max $3,000/household) for renters under 30% area median income who are in workforce training or credentialing. $1.9M annual appropriation administered via community action agencies or municipal housing authorities.</td>
+        <td><span class="tag tag-debate">Before Legislature 2025</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Mayor Dion testified in support April 22, 2025, calling it a tool to prevent homelessness for working Mainers lacking housing stability — treating the upstream cause rather than shelter demand alone.</td>
+      </tr>
+      <tr>
+        <td><div class="bill-id" style="color:var(--blue)">Student Homelessness Fund</div></td>
+        <td style="font-weight:600">College Student Housing Assistance</td>
+        <td style="font-size:12px;color:var(--ink-3)">Establishes a fund to help students at Maine colleges and universities avoid homelessness. Addresses rising youth homelessness among higher-education students.</td>
+        <td><span class="tag tag-pass">Passed both chambers — May 2025</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Particularly relevant to Portland area, home to University of Southern Maine (USM) and Southern Maine Community College (SMCC).</td>
+      </tr>
+      <tr>
+        <td><div class="bill-id" style="color:var(--blue)">Encampment Property Bill</div></td>
+        <td style="font-weight:600">Belongings Protection During Sweeps</td>
+        <td style="font-size:12px;color:var(--ink-3)">Would require state and local governments to provide notice and hold hearings before removing a homeless person's belongings from public property. Sponsored by Sen. Rana and Rep. Spencer White. Exceptions for abandoned or hazardous items.</td>
+        <td><span class="tag tag-debate">Advanced in committee, April 2025</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Portland already has ACLU-documented local protections; advocates argue a state law would create enforceable statewide standards and add accountability.</td>
+      </tr>
+      <tr>
+        <td><div class="bill-id" style="color:var(--blue)">LD 1041</div></td>
+        <td style="font-weight:600">Preserve Affordability in Subsidized Housing</td>
+        <td style="font-size:12px;color:var(--ink-3)">Aims to maintain affordability requirements in publicly supported housing when subsidies expire, preventing units from converting to market rate after public investment. Addresses a known gap in affordable housing preservation.</td>
+        <td><span class="tag tag-debate">Referred to committee 2025</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Relevant to Portland's affordable stock, where some subsidized units have exited the affordable market after government investment periods ended.</td>
+      </tr>
+      <tr>
+        <td><div class="bill-id" style="color:var(--ink-3)">GA Rule No. 26</div></td>
+        <td style="font-weight:600">State General Assistance Funding Formula (Rule Change)</td>
+        <td style="font-size:12px;color:var(--ink-3)">Maine DHHS proposed Rule No. 26, changing reimbursement to cities for shelter costs. Under the rule, Portland would receive $48/night per guest (70% reimbursement) instead of its prior $84/night rate — a $4.4M annual reduction. Portland argues the Legislature, not DHHS, should determine this formula.</td>
+        <td><span class="tag tag-active">Active litigation — Portland v. Maine DHHS</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Portland is suing DHHS in Maine court asking a judge to block the rule. "Don't ask us to raise property taxes on our residents because you failed to meet your responsibility" — Mayor Dion.</td>
+      </tr>
+      <tr>
+        <td><div class="bill-id" style="color:var(--green)">Site-Based Housing First Funding</div></td>
+        <td style="font-weight:600">State Budget — Housing First Expansion</td>
+        <td style="font-size:12px;color:var(--ink-3)">Maine's 131st and 132nd Legislature budgets included funding for creation of 12–15 new Site-based Housing First programs modeled on Preble Street's Portland portfolio. Gov. Mills signed into law in July 2023.</td>
+        <td><span class="tag tag-pass">Signed into law — Gov. Mills</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Directly supports Avesta Housing + Preble Street's planned 30–50 unit development at the former Oxford Street Shelter site in Portland's Bayside neighborhood.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 class="sub" style="margin-bottom:1rem">Federal policy directly affecting Portland, ME</h3>
+  <div class="bills-wrap">
+  <table class="btbl">
+    <thead>
+      <tr><th>Program / Action</th><th>What it does</th><th>Status (2025)</th><th>Maine / Portland impact</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:600">HUD Continuum of Care (CoC) Grants</td>
+        <td style="font-size:12px;color:var(--ink-3)">Federal grants funding shelter operations, permanent supportive housing, rapid rehousing, and homelessness prevention. ~218,000 people nationally rely on CoC-funded permanent supportive housing.</td>
+        <td><span class="tag tag-debate">Future funding uncertain — 2025 federal budget</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">MaineHousing administers Maine's single statewide CoC. Cuts would reduce shelter operations, rapid rehousing, and supportive housing in Portland. Preble Street cited this risk explicitly in 2025.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">LIHEAP (Federal Heating Assistance)</td>
+        <td style="font-size:12px;color:var(--ink-3)">Low Income Home Energy Assistance Program. Critical in Maine's climate — loss of heating can directly trigger housing loss in winter. Program was paused federally in 2025.</td>
+        <td><span class="tag tag-debate">Paused federally — MaineHousing used state stopgap</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Gov. Mills warned 1,200+ Mainers at risk. MaineHousing provided emergency state funds. Without sustained federal LIHEAP, Maine shelter demand would increase in winter months.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Section 8 / Housing Choice Vouchers</td>
+        <td style="font-size:12px;color:var(--ink-3)">Federally-funded rental subsidies allowing low-income households to afford private market housing. Administered locally by Housing Authority of Portland (HAP). Waitlists in Portland are years-long.</td>
+        <td><span class="tag tag-debate">Funding level uncertain in 2025 federal budget</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Portland-area Section 8 waitlists are extremely long. Any cuts would increase demand for emergency shelter. Some Portlanders exit homelessness specifically via Section 8 vouchers obtained through years of waitlisting.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Grants Pass v. Johnson (SCOTUS, 2024)</td>
+        <td style="font-size:12px;color:var(--ink-3)">Ruled cities may penalize public camping without violating the 8th Amendment, even without available shelter. Post-ruling, 100+ U.S. cities passed camping bans within 7 months.</td>
+        <td><span class="tag tag-pass">In effect nationally</span></td>
+        <td style="font-size:12px;color:var(--ink-3)">Portland, ME is still constrained by a separate Maine state statute restricting penalties when no shelter is available. A Maine Legislative change would be required to fully adopt a Grants Pass-style approach. No such bill has passed as of 2025.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 class="sub" style="margin-bottom:.75rem">Policy approaches being debated nationally — context for Portland</h3>
+  <div class="dnote" style="margin-bottom:1rem">The following approaches are factual policy debates occurring nationally and in comparable cities. Included for informational context only. Each has documented proponents and critics — both sides noted where relevant.</div>
+
+  <div class="debate-grid">
+    <div class="dcard dc-housing">
+      <div class="dcard-kicker">Housing First</div>
+      <div class="dcard-title">Permanent housing without preconditions</div>
+      <div class="dcard-body">Place people directly into permanent housing regardless of sobriety or treatment compliance; provide services after. Maine has funded expansion via the 2023 budget. Preble Street has operated this model in Portland for 20+ years. <strong>Pro:</strong> Houston reduced homelessness 60% over a decade. <strong>Con:</strong> Some argue accountability expectations improve long-term outcomes for individuals with addiction.</div>
+    </div>
+    <div class="dcard dc-mixed">
+      <div class="dcard-kicker">Conditional Housing</div>
+      <div class="dcard-title">Housing linked to rehabilitation steps</div>
+      <div class="dcard-body">Mayor Dion's stated position. Requires individuals to take steps toward rehabilitation as a condition of housing placement. <strong>Pro:</strong> Ensures accountability; some programs (e.g. Step Denver) show results with accountability-linked services. <strong>Con:</strong> Housing First evidence base shows better outcomes for unconditional placement; preconditions create barriers to the most vulnerable.</div>
+    </div>
+    <div class="dcard dc-mixed">
+      <div class="dcard-kicker">Tourism / Lodging Tax</div>
+      <div class="dcard-title">Fund shelters via hotel/rental fees</div>
+      <div class="dcard-body">Maine's LD 1476 proposed this mechanism. <strong>Pro:</strong> Ties tourism economy to social infrastructure; diversifies funding beyond property taxes (Mayor Dion: "fair, innovative, and fiscally responsible"). <strong>Con:</strong> Maine tourism industry opposed; Maine House voted it down 92–51 in June 2025. Used in Colorado for affordable housing.</div>
+    </div>
+    <div class="dcard dc-housing">
+      <div class="dcard-kicker">Zoning Reform</div>
+      <div class="dcard-title">Allow more housing density</div>
+      <div class="dcard-body">Mayor Dion asked the Portland City Council to reassess the Green New Deal inclusionary zoning ordinance, arguing the $178,000/unit fee suppresses construction. <strong>Pro:</strong> More housing supply lowers prices over time. <strong>Con:</strong> Opponents argue affordability requirements ensure new units are accessible; removing them could produce market-rate-only development.</div>
+    </div>
+    <div class="dcard dc-mixed">
+      <div class="dcard-kicker">Regional Coordination</div>
+      <div class="dcard-title">Share shelter data and costs across municipalities</div>
+      <div class="dcard-body">Mayor Dion has specifically called for a dedicated state office to coordinate homelessness data and resources between cities. 62% of Portland HSC guests come from outside Portland; surrounding municipalities provide little funding. <strong>Pro:</strong> Matches cost-sharing to regional need. <strong>Con:</strong> Requires state legislative action and political consensus across municipalities.</div>
+    </div>
+    <div class="dcard dc-legal">
+      <div class="dcard-kicker">Non-Police Crisis Response</div>
+      <div class="dcard-title">Mental health responders for homeless-related calls</div>
+      <div class="dcard-body">Modeled on Eugene, OR's CAHOOTS program (1989) and Denver's STAR program (2020). Trained civilian crisis workers + medics respond instead of police for non-violent calls. <strong>Pro:</strong> Reduces criminalization; Brookings finds better outcomes than police-only or co-responder models. <strong>Con:</strong> Requires separate staffing and dispatch infrastructure. Not yet established in Portland, ME.</div>
+    </div>
+    <div class="dcard dc-data">
+      <div class="dcard-kicker">Real-Time Data Systems</div>
+      <div class="dcard-title">Move beyond annual PIT counts</div>
+      <div class="dcard-body">Community Solutions' "Built for Zero" model tracks homelessness by name in real time, allowing targeted intervention. Mayor Dion has called for a state coordinating office with live data. <strong>Pro:</strong> Chattanooga effectively ended veteran homelessness using this approach. <strong>Con:</strong> Requires sustained investment in data infrastructure and privacy protections.</div>
+    </div>
+    <div class="dcard dc-legal">
+      <div class="dcard-kicker">Maine State Camping Law</div>
+      <div class="dcard-title">Revisiting the shelter-availability requirement</div>
+      <div class="dcard-body">Maine's state law currently limits municipalities from penalizing outdoor camping when no shelter is available. Post-Grants Pass Supreme Court ruling, some Maine lawmakers have signaled interest in revisiting this. <strong>Pro:</strong> Would give cities more enforcement flexibility. <strong>Con:</strong> Critics argue removing this protection would criminalize homelessness without providing housing — and data shows sweeps move people, not out of homelessness.</div>
+    </div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- 07 NATIONAL -->
+<div id="national">
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <h2 class="sec-title">National Context — How Other Cities Are Responding</h2>
+    <span class="sec-date">HUD AHAR 2024 · Brookings · National Alliance to End Homelessness · 2024–2025</span>
+  </div>
+
+  <div class="hbox">U.S. homelessness reached a record <strong>771,000 people</strong> on a single night in January 2024 — an 18% increase from 2023. Portland, ME's challenges are part of a national crisis. The following city summaries are factual; no approach is endorsed. Outcome labels reflect documented data, not editorial judgment.</div>
+
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:2rem">
+    <div class="scard"><div class="scard-tag">U.S. homeless (Jan 2024)</div><div class="scard-num red">771,000</div><div class="scard-note">Record high — 18% increase from 2023</div></div>
+    <div class="scard"><div class="scard-tag">Chronically homeless (2024)</div><div class="scard-num red">152,000+</div><div class="scard-note">Highest since data collection began 2007</div></div>
+    <div class="scard"><div class="scard-tag">Families with children (2024)</div><div class="scard-num amber">259,000</div><div class="scard-note">Record high; up from 186,000 in 2023</div></div>
+    <div class="scard"><div class="scard-tag">New camping bans (post-Grants Pass)</div><div class="scard-num blue">100+</div><div class="scard-note">Passed within 7 months of SCOTUS ruling</div></div>
+  </div>
+
+  <div class="city-grid">
+    <div class="city-card">
+      <div class="city-head"><div class="city-name">Houston, TX</div><span class="approach-badge ap-hf">Housing First</span></div>
+      <div class="city-stat">PIT: <strong>3,325 (2025)</strong> · Harris, Fort Bend, Montgomery counties</div>
+      <div class="city-body">Houston's "The Way Home" coalition (est. 2011) aligned city, county, nonprofit, and philanthropic funding around Housing First with real-time coordinated entry data. No sobriety or treatment requirements for housing placement. Mayor John Whitmire launched a $70M "Initiative to End Street Homelessness" in 2025. In 2024, there were more veteran move-ins to housing than new veteran homelessness in Houston.</div>
+      <div class="city-result res-mix">▲ 60% reduction in homelessness over a decade. BUT: unsheltered population surged 16% in 2025 as federal COVID relief expired — demonstrating Housing First requires sustained funding to hold gains. <em>Lesson: works long-term, but federal funding loss reverses progress quickly.</em></div>
+    </div>
+    <div class="city-card">
+      <div class="city-head"><div class="city-name">Denver, CO</div><span class="approach-badge ap-mix">Mixed approach</span></div>
+      <div class="city-stat">PIT: <strong>6,539 (2024)</strong> · metro: 9,977</div>
+      <div class="city-body">Denver invested $100M+ in non-congregate hotel shelters and micro-communities, reducing outdoor encampments 23%. Launched the STAR program (mental health + paramedic non-police response) in 2020. Connected 2,000+ outdoor sleepers to housing since 2023. Metro Denver Homeless Initiative has used real-time coordinated entry data since 1994.</div>
+      <div class="city-result res-mix">▲ Total homelessness rose 12% in 2024, but unsheltered family homelessness dropped 82.5% and unsheltered individuals in Denver proper fell 10.5%. <em>Lesson: targeted investment and real-time data can reduce specific groups even as aggregate numbers rise.</em></div>
+    </div>
+    <div class="city-card">
+      <div class="city-head"><div class="city-name">Boston, MA</div><span class="approach-badge ap-mix">New England comparable</span></div>
+      <div class="city-stat">PIT: <strong>~7,700 (2024)</strong> · cold-weather, high-cost, comparable economy</div>
+      <div class="city-body">Boston operates Pine Street Inn (~700 beds — one of New England's largest) alongside a large nonprofit network. Massachusetts has a legal right-to-shelter for families, which placed enormous strain on capacity with asylum seeker arrivals. Massachusetts relies heavily on state-funded emergency assistance alongside city shelter.</div>
+      <div class="city-result res-up">▲ Homelessness increased substantially 2023–2024 driven by asylum seekers. <em>Lesson: a legal right-to-shelter guarantees access but requires proportional funding to avoid system overload — a dynamic directly relevant to Portland, ME's regional burden.</em></div>
+    </div>
+    <div class="city-card">
+      <div class="city-head"><div class="city-name">Chattanooga, TN</div><span class="approach-badge ap-hf">Built for Zero model</span></div>
+      <div class="city-stat">Veteran homelessness: functionally ended by 2020</div>
+      <div class="city-body">Chattanooga Regional Homeless Coalition used Community Solutions' "Built for Zero" model — real-time by-name tracking of every unhoused individual rather than annual snapshots. Targeted specific sub-populations (primarily veterans) with intensive coordinated services. In 2024, more veterans exited homelessness in Chattanooga than became homeless.</div>
+      <div class="city-result res-dn">▼ Functional zero veteran homelessness achieved locally. <em>Lesson: sub-population focus with real-time data can achieve measurable milestones — even without solving all homelessness. Directly applicable to Maine's veteran count increase.</em></div>
+    </div>
+    <div class="city-card">
+      <div class="city-head"><div class="city-name">New York City, NY</div><span class="approach-badge ap-enf">Enforcement-heavy</span></div>
+      <div class="city-stat">Shelter system: <strong>140,000+</strong> · PIT up 53% in 2023–2024</div>
+      <div class="city-body">NYC operates the largest municipal shelter system in the U.S. and has a legal right-to-shelter. ~2,300 encampment sweeps were conducted Jan–Sept 2024. Of nearly 3,600 individuals affected, only 114 were placed in shelters and none in permanent housing. The Coalition for the Homeless calculated $3.6M spent on sweeps in 2024 could have housed 175 individuals already approved for supportive housing.</div>
+      <div class="city-result res-up">▲ Homelessness rose sharply; sweep-to-housing conversion rate extremely low. <em>Lesson: enforcement without proportional housing supply moves people within the system — it does not resolve homelessness.</em></div>
+    </div>
+    <div class="city-card">
+      <div class="city-head"><div class="city-name">Austin, TX</div><span class="approach-badge ap-hf">Housing-focused</span></div>
+      <div class="city-stat">One of few major metros with documented declines (2023)</div>
+      <div class="city-body">Austin invested heavily in permanent supportive housing and rapid rehousing with strong regional coordination between city, county, and surrounding municipalities. Brookings cited Austin alongside Indianapolis as a national bright spot. Strong job market and newer housing stock provide structural advantages.</div>
+      <div class="city-result res-dn">▼ Homelessness declining — warm-weather city with strong economy and regional coordination. <em>Lesson: regional cost-sharing and sustained housing investment produce results. Maine's climate and economy differ significantly.</em></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="dnote green">
+        <strong>Brookings Institution (2024):</strong> Punitive policing of homelessness — arrests or fines for camping, sleeping, eating in public — makes it harder to solve by adding criminal records that impede housing access and employment. Non-police crisis response (Denver STAR; Eugene CAHOOTS) outperforms both police-only and co-responder models for behavioral health calls. Regional, data-driven coordination with real-time tracking produces better outcomes than siloed city-by-city approaches.
+      </div>
+      <div class="dnote blue" style="margin-top:0">
+        <strong>National Alliance to End Homelessness (2025):</strong> Federal rollback of CoC funding, HUD programs, and housing vouchers threatens 218,000 people in Permanent Supportive Housing nationally. Veteran programs demonstrate that when adequately funded with clear targets, homelessness can be reduced to functional zero for specific populations. Maine's statewide single CoC is an asset in this regard.
+      </div>
+    </div>
+    <div>
+      <div class="dnote" style="margin-top:0">
+        <strong>Community Solutions "Built for Zero":</strong> The primary barrier to progress in most cities is the lack of real-time data. Annual PIT snapshots prevent timely intervention. Cities that track homelessness by name in real time can identify and respond before situations worsen. This approach is not yet in use in Portland, ME, though Mayor Dion has called for a state coordinating office with live data capabilities.
+      </div>
+      <div class="dnote red" style="margin-top:0">
+        <strong>A cautionary note:</strong> Houston's experience illustrates that even a highly successful 10-year program can unravel quickly when federal funding changes. Sustainable homelessness reduction requires consistent, long-term public investment — a lesson directly relevant to Maine as CoC grants and LIHEAP face federal uncertainty in 2025.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- 08 ORGS -->
 <div id="orgs">
-<section>
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">05</span>
-      <h2 class="section-title">Organizations & Services</h2>
-      <span class="section-updated">Portland, ME · Active providers</span>
-    </div>
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <h2 class="sec-title">Organizations & Services</h2>
+    <span class="sec-date">Portland, Maine · Active providers</span>
+  </div>
+  <div class="org-grid">
+    <div class="ocard"><div class="ocard-name">Preble Street</div><div class="ocard-role">Shelter · Food · Housing · Advocacy</div><div class="ocard-body">Maine's largest homeless services nonprofit (est. 1975, Portland). ~300 staff. Four shelters (3 Portland, 1 Bangor). Florence House, Joe Kreisler Teen Shelter, Housing First buildings. 1M+ meals served in 2023. Budget grew 128% in five years. Budget grew 128% in five years. Advocates in Augusta; 1,200 Mainers at risk per 2025 statement.</div><a href="https://www.preblestreet.org" class="ocard-link">preblestreet.org →</a></div>
+    <div class="ocard"><div class="ocard-name">City of Portland HHS</div><div class="ocard-role">Emergency Shelter · General Assistance</div><div class="ocard-body">Operates HSC (Riverton), Family Shelter, and city-level response under Mayor Dion. Administers General Assistance program. Maintains real-time shelter availability data shared with Portland Police Department. Coordinates park rangers and outreach workers.</div><a href="https://www.portlandmaine.gov" class="ocard-link">portlandmaine.gov →</a></div>
+    <div class="ocard"><div class="ocard-name">MaineHousing</div><div class="ocard-role">State Agency · Funding & Data</div><div class="ocard-body">Independent Maine state agency administering federal and state housing funds. Conducts annual PIT count. Distributes grants for shelter operations, affordable housing development, and housing assistance. Primary source of statewide homelessness data. Published the 2025 PIT report.</div><a href="https://www.mainehousing.org" class="ocard-link">mainehousing.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Avesta Housing</div><div class="ocard-role">Affordable Housing Development</div><div class="ocard-body">Largest nonprofit affordable housing provider in northern New England. Owns Housing First buildings with Preble Street (Logan Place 2005, Florence House 2010, Huston Commons 2017). 1,000+ affordable homes at 25+ Portland properties. Purchase option on former Oxford St. site.</div><a href="https://www.avestahousing.org" class="ocard-link">avestahousing.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Catholic Charities Maine</div><div class="ocard-role">Transitional Housing · Asylum Seeker Services</div><div class="ocard-body">Operated the Saco transitional housing program with City of Portland and State of Maine. 81% permanent housing rate across 192 households (737 individuals). Also provides immigration, refugee, and statewide social services.</div><a href="https://www.ccmaine.org" class="ocard-link">ccmaine.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Opportunity Alliance</div><div class="ocard-role">Workforce · Mental Health · Services</div><div class="ocard-body">Community action agency providing on-site services at the HSC including workforce re-entry, mental health support, and financial stability programming.</div><a href="https://www.opportunityalliance.org" class="ocard-link">opportunityalliance.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Amistad</div><div class="ocard-role">Behavioral Health · Peer Support</div><div class="ocard-body">Provides behavioral health peer support at the HSC and across Portland for individuals experiencing mental illness and substance use disorders alongside homelessness.</div><a href="https://www.amistadmaine.org" class="ocard-link">amistadmaine.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Greater Portland Health</div><div class="ocard-role">Federally Qualified Health Center</div><div class="ocard-body">On-site at the HSC. Provides primary care, mental health, and substance use treatment to unhoused individuals. Connects clients to MaineCare, medications, and ongoing care.</div><a href="https://www.greaterportlandhealth.org" class="ocard-link">greaterportlandhealth.org →</a></div>
+    <div class="ocard"><div class="ocard-name">ACLU of Maine</div><div class="ocard-role">Civil Rights Advocacy</div><div class="ocard-body">Publishes Know Your Rights materials for Portland's unhoused population. Documents legal protections during encampment sweeps: 24-hr notice, one-week property storage, no removal when all shelters full.</div><a href="https://www.aclumaine.org" class="ocard-link">aclumaine.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Maine Continuum of Care</div><div class="ocard-role">Coordinated Homeless Response System</div><div class="ocard-body">Maine's federally-designated HUD planning body. Administers CoC grants, coordinates annual PIT count with MaineHousing, manages HMIS. Maine has a single statewide CoC — unusual nationally; most large states have multiple regional CoCs.</div><a href="https://www.mainehousing.org" class="ocard-link">mainehousing.org/coc →</a></div>
+    <div class="ocard"><div class="ocard-name">Community Housing of Maine (CHOM)</div><div class="ocard-role">Permanent Supportive Housing</div><div class="ocard-body">Develops and manages permanent supportive housing for people with mental illness, substance use disorders, and disabilities across Maine, including Portland.</div><a href="https://www.chomaine.org" class="ocard-link">chomaine.org →</a></div>
+    <div class="ocard"><div class="ocard-name">Milestone Recovery</div><div class="ocard-role">Substance Use · Recovery Housing</div><div class="ocard-body">Provides substance use disorder treatment, recovery housing, and social services in Portland. One of the organizations Mayor Dion credited in the city's decade-long housing placement work.</div><a href="https://www.milestonerecovery.org" class="ocard-link">milestonerecovery.org →</a></div>
+  </div>
 
-    <div class="org-grid">
-      <div class="org-card">
-        <div class="org-name">Preble Street</div>
-        <div class="org-role">Shelter, Food, Housing, Advocacy</div>
-        <div class="org-desc">Maine's largest homeless services nonprofit (est. 1975). Operates shelters, food pantry, social work services, teen shelter, women's shelter, Housing First programs, and statewide advocacy. ~300 staff. Four shelters including three in Portland, one in Bangor. Partners with Avesta Housing on permanent supportive housing.</div>
-        <a href="https://www.preblestreet.org" class="org-link">preblestreet.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">City of Portland — Health & Human Services</div>
-        <div class="org-role">Emergency Shelter, General Assistance</div>
-        <div class="org-desc">Operates the Homeless Services Center (Riverton), Family Shelter, and coordinates city-level response. Administers General Assistance program. Maintains real-time shelter availability data. Coordinates with police, outreach workers, and service providers.</div>
-        <a href="https://www.portlandmaine.gov" class="org-link">portlandmaine.gov →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">MaineHousing</div>
-        <div class="org-role">State Agency — Funding & Data</div>
-        <div class="org-desc">Independent Maine state agency administering federal and state housing funds. Conducts the annual Point-in-Time count. Distributes grants for shelter operations, affordable housing development, and housing assistance programs. Primary source of statewide homelessness data.</div>
-        <a href="https://www.mainehousing.org" class="org-link">mainehousing.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">Avesta Housing</div>
-        <div class="org-role">Affordable Housing Development</div>
-        <div class="org-desc">Largest nonprofit affordable housing provider in northern New England. Owns and maintains Housing First buildings (Logan Place, Florence House, Huston Commons) in partnership with Preble Street. Operates 1,000+ affordable homes at 25+ Portland properties. Planning new development at former Oxford Street site.</div>
-        <a href="https://www.avestahousing.org" class="org-link">avestahousing.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">Catholic Charities Maine</div>
-        <div class="org-role">Transitional Housing, Asylum Seeker Services</div>
-        <div class="org-desc">Operated the Saco transitional housing program for asylum-seeking families in partnership with the City of Portland and the State of Maine. 81% permanent housing success rate. Also provides immigration and refugee services, food pantries, and social services statewide.</div>
-        <a href="https://www.ccmaine.org" class="org-link">ccmaine.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">Opportunity Alliance</div>
-        <div class="org-role">Workforce, Mental Health, Services</div>
-        <div class="org-desc">Community action agency providing wraparound services at the Homeless Services Center including workforce re-entry programming, mental health support, and financial stability services.</div>
-        <a href="https://www.opportunityalliance.org" class="org-link">opportunityalliance.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">Amistad</div>
-        <div class="org-role">Behavioral Health, Peer Support</div>
-        <div class="org-desc">Provides behavioral health peer support services at the Homeless Services Center and across Portland. Works with individuals experiencing mental illness and substance use disorders who are experiencing homelessness.</div>
-        <a href="https://www.amistadmaine.org" class="org-link">amistadmaine.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">Greater Portland Health</div>
-        <div class="org-role">Community Health Center</div>
-        <div class="org-desc">Federally Qualified Health Center offering primary care, mental health, and substance use treatment to unhoused individuals in Portland. Works with shelter-based case managers to connect clients to MaineCare, medications, and ongoing care.</div>
-        <a href="https://www.greaterportlandhealth.org" class="org-link">greaterportlandhealth.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">ACLU of Maine</div>
-        <div class="org-role">Civil Rights Advocacy</div>
-        <div class="org-desc">Publishes Know Your Rights guides for people experiencing homelessness in Portland. Has challenged camping ordinances on constitutional grounds. Advocates for civil rights protections during encampment sweeps, including property storage rights.</div>
-        <a href="https://www.aclumaine.org" class="org-link">aclumaine.org →</a>
-      </div>
-
-      <div class="org-card">
-        <div class="org-name">Maine Continuum of Care</div>
-        <div class="org-role">Coordinated Homeless Response System</div>
-        <div class="org-desc">The federally designated body that coordinates homelessness services across Maine's Continuum of Care regions. Administers HUD funds, coordinates the annual Point-in-Time count with MaineHousing, and manages the Homeless Management Information System (HMIS).</div>
-        <a href="https://www.mainehousing.org" class="org-link">mainehousing.org/coc →</a>
-      </div>
-    </div>
-
-    <div style="margin-top: 2rem; padding: 1.25rem; background: var(--paper-2); border-radius: 4px; border: 1px solid var(--border);">
-      <h3 style="margin-bottom: 0.75rem;">Get help / connect to shelter</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 13px;">
-        <div>
-          <strong style="display: block; margin-bottom: 4px; color: var(--ink-2);">211 Maine</strong>
-          <span style="color: var(--ink-3);">Call or text <strong>211</strong> for shelter referrals, housing assistance, food resources, and social services. Available 24/7.</span>
-        </div>
-        <div>
-          <strong style="display: block; margin-bottom: 4px; color: var(--ink-2);">City of Portland Outreach</strong>
-          <span style="color: var(--ink-3);">Request contact from a City Street Outreach Worker through the City's website for assistance navigating shelter and services.</span>
-        </div>
-        <div>
-          <strong style="display: block; margin-bottom: 4px; color: var(--ink-2);">Preble Street Resource Center</strong>
-          <span style="color: var(--ink-3);">675 Main Street, Portland. Daytime services including food, clothing, showers, case management, and mail. Open to all.</span>
-        </div>
-      </div>
+  <div style="margin-top:2rem;padding:1.35rem 1.5rem;background:var(--ink);border-radius:var(--radius);">
+    <h3 class="sub" style="color:rgba(250,248,243,.5);margin-bottom:.9rem">Get help · connect to shelter · Portland, Maine</h3>
+    <div class="three-col" style="gap:1.5rem">
+      <div><strong style="color:var(--paper);display:block;margin-bottom:4px;font-size:13px">211 Maine</strong><span style="color:rgba(250,248,243,.5);font-size:12px">Call or text <strong style="color:var(--paper)">211</strong> — 24/7 shelter referrals, housing assistance, food resources, and social services statewide.</span></div>
+      <div><strong style="color:var(--paper);display:block;margin-bottom:4px;font-size:13px">Preble Street Resource Center</strong><span style="color:rgba(250,248,243,.5);font-size:12px">675 Main St, Portland. Daytime services: food, clothing, showers, case management, mail. Open to all, no barriers.</span></div>
+      <div><strong style="color:var(--paper);display:block;margin-bottom:4px;font-size:13px">Emergency · City Outreach</strong><span style="color:rgba(250,248,243,.5);font-size:12px">Emergency: <strong style="color:var(--paper)">911</strong>. Non-emergency: Portland Police (207) 874-8575. Request outreach at portlandmaine.gov.</span></div>
     </div>
   </div>
+</div>
 </section>
 </div>
 
-<!-- SECTION 6: GLOSSARY -->
+<!-- 09 GLOSSARY -->
 <div id="glossary">
-<section>
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">06</span>
-      <h2 class="section-title">Glossary of Terms</h2>
-    </div>
-
-    <div class="glossary-grid">
-      <div class="glossary-item">
-        <div class="glossary-term">Point-in-Time (PIT) Count</div>
-        <div class="glossary-def">A federally mandated annual count of homeless individuals on a single January night. Required by HUD for communities receiving federal housing funds. Conducted in Maine by MaineHousing and the Maine Continuum of Care. Captures sheltered and unsheltered homelessness but misses many informal living situations.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Unsheltered</div>
-        <div class="glossary-def">Individuals sleeping in places not meant for human habitation — streets, parks, encampments, vehicles, abandoned buildings. Distinct from those in shelters or transitional housing. Counted separately in the PIT.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Chronically Homeless</div>
-        <div class="glossary-def">HUD definition: an individual with a disabling condition who has been homeless continuously for 12+ months, or on at least 4 occasions in the last 3 years totaling 12+ months. This population has complex needs and is prioritized for Housing First programs.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Housing First</div>
-        <div class="glossary-def">An evidence-based approach that prioritizes placing people directly into permanent housing without preconditions (such as sobriety or treatment compliance), with supportive services provided afterward. Preble Street's Logan Place, Florence House, and Huston Commons operate on this model.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Site-based Housing First</div>
-        <div class="glossary-def">A variant of Housing First in which an entire building is dedicated to formerly homeless individuals, with on-site 24/7 professional social work staff. This model is used by Preble Street and Avesta Housing at multiple Portland properties.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">HMIS (Homeless Management Information System)</div>
-        <div class="glossary-def">A federally required database tracking individuals accessing homelessness services, including shelter admissions, housing placements, and service utilization. Used to generate data for HUD reports and to coordinate care across providers. Managed locally by the Maine Continuum of Care.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">General Assistance (GA)</div>
-        <div class="glossary-def">A Maine program administered by municipalities that provides short-term financial assistance to individuals and families in immediate need, including for emergency housing. Overseen at the state level but funded and operated at the municipal level.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Transitional Housing</div>
-        <div class="glossary-def">Temporary housing (typically up to 24 months) with supportive services designed to help individuals and families move to permanent housing. Distinct from emergency shelters (short-term) and permanent supportive housing (long-term).</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Continuum of Care (CoC)</div>
-        <div class="glossary-def">A regional body designated by HUD to coordinate a community's approach to ending homelessness. Responsible for organizing funding applications, data collection, and planning across a defined geographic area. Maine has a single statewide CoC.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Reasonable Alternate Shelter</div>
-        <div class="glossary-def">Under Portland's camping ordinance, a person can be cited for camping in public only if they have access to "reasonable alternate shelter." This may include congregate shelters, transitional housing, or hotel placements assessed as suitable for the individual. Officers have real-time data on bed availability.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">MaineCare</div>
-        <div class="glossary-def">Maine's Medicaid program, providing health coverage to low-income individuals. Many unhoused individuals are eligible but may have lapsed coverage; shelter-based case managers frequently help clients reinstate MaineCare as a first step toward accessing health and behavioral health services.</div>
-      </div>
-      <div class="glossary-item">
-        <div class="glossary-term">Rapid Rehousing</div>
-        <div class="glossary-def">A short-to-medium-term intervention that provides rental assistance and services to help homeless individuals and families quickly move into private market housing. Differs from Housing First in that support is time-limited. Preble Street is expanding rapid rehousing services to Lewiston.</div>
-      </div>
-    </div>
+<section class="sec">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <h2 class="sec-title">Glossary of Terms</h2>
   </div>
+  <div class="glos-grid">
+    <div class="gitem"><div class="gitem-term">Point-in-Time (PIT) Count</div><div class="gitem-def">Federally mandated annual count of homeless individuals on a single January night. Conducted in Maine by MaineHousing and the Maine Continuum of Care. Captures sheltered and unsheltered homelessness but misses doubled-up and informal situations. A snapshot — not a comprehensive measure.</div></div>
+    <div class="gitem"><div class="gitem-term">Unsheltered</div><div class="gitem-def">Individuals sleeping in places not meant for human habitation — streets, parks, encampments, vehicles, abandoned buildings. Counted separately in the PIT from those in shelters or transitional housing.</div></div>
+    <div class="gitem"><div class="gitem-term">Chronically Homeless</div><div class="gitem-def">HUD definition: an individual with a disabling condition who has been homeless continuously for 12+ months, or on 4+ occasions in the last 3 years totaling 12+ months. Prioritized for Housing First and permanent supportive housing programs.</div></div>
+    <div class="gitem"><div class="gitem-term">Housing First</div><div class="gitem-def">Evidence-based approach placing people directly into permanent housing with no preconditions (sobriety, treatment compliance, income). Services are provided after housing. Preble Street has used this model in Portland for 20+ years. Maine's 2023 budget funded 12–15 new Housing First programs statewide.</div></div>
+    <div class="gitem"><div class="gitem-term">Site-Based Housing First</div><div class="gitem-def">A Housing First variant where an entire building is dedicated to formerly homeless individuals with 24/7 on-site professional social work staff. Preble Street + Avesta Housing use this model at Logan Place (2005), Florence House (2010), and Huston Commons (2017) in Portland.</div></div>
+    <div class="gitem"><div class="gitem-term">General Assistance (GA)</div><div class="gitem-def">Maine program administered by municipalities providing short-term financial assistance for emergency housing and basic needs. The state reimburses a share of municipal costs. Proposed Rule No. 26 would cut Portland's reimbursement rate from $84 to $48/night — a $4.4M cut Portland is now challenging in court.</div></div>
+    <div class="gitem"><div class="gitem-term">HMIS</div><div class="gitem-def">Homeless Management Information System. Federally required database tracking individuals accessing homelessness services — admissions, housing placements, service utilization. Managed by the Maine Continuum of Care. Used to generate HUD reports and coordinate care across providers.</div></div>
+    <div class="gitem"><div class="gitem-term">Continuum of Care (CoC)</div><div class="gitem-def">A HUD-designated body coordinating community homelessness response — funding, data, planning. Maine has a single statewide CoC (unusual nationally; most large states have multiple regional CoCs). Administers federal CoC grants, coordinates PIT counts, manages HMIS.</div></div>
+    <div class="gitem"><div class="gitem-term">Reasonable Alternate Shelter</div><div class="gitem-def">Under Portland, Maine's camping ordinance, an individual can only be cited for public camping if they have access to "reasonable alternate shelter." Portland police officers have real-time bed availability data to make this determination. If all shelters are full, enforcement is not authorized under current city policy.</div></div>
+    <div class="gitem"><div class="gitem-term">Built for Zero / By-Name List</div><div class="gitem-def">A methodology from Community Solutions tracking every homeless individual by name in real time rather than annual snapshots. Allows targeted intervention and measurable outcomes. Chattanooga used this to functionally end veteran homelessness. Not yet adopted in Portland, ME — Mayor Dion has called for a state-level coordinating office with live data capabilities.</div></div>
+    <div class="gitem"><div class="gitem-term">MaineCare</div><div class="gitem-def">Maine's Medicaid program. Many unhoused individuals are eligible but have lapsed coverage. Shelter-based case managers at the HSC and partner organizations frequently help clients reinstate MaineCare as a first step toward accessing health and behavioral health services.</div></div>
+    <div class="gitem"><div class="gitem-term">Rapid Rehousing</div><div class="gitem-def">Short-to-medium-term rental assistance and services helping homeless individuals move quickly into private market housing. Time-limited — differs from permanent Housing First. Preble Street is expanding rapid rehousing services in Maine. LD 1287 would create a similar Housing Stability Support Program through MaineHousing.</div></div>
+  </div>
+</div>
 </section>
 </div>
 
-<!-- SECTION 7: SOURCES -->
-<section style="border-bottom: none;">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-num">07</span>
-      <h2 class="section-title">Sources & Methodology</h2>
+<!-- 10 SOURCES -->
+<section class="sec" style="border-bottom:none">
+<div class="container">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <h2 class="sec-title">Sources & Methodology</h2>
+  </div>
+  <div class="two-col" style="font-size:12px;color:var(--ink-3);line-height:1.85">
+    <div>
+      <h3 class="sub">Primary Maine sources</h3>
+      <ul style="padding-left:1.2rem">
+        <li>MaineHousing — 2025 PIT Count Report (Jan. 22, 2025)</li>
+        <li>MaineHousing — 2024 PIT Count Report (Jan. 23, 2024)</li>
+        <li>City of Portland HHS — 2023 Year in Review: Homeless Services</li>
+        <li>Mayor Mark Dion — State of the City Address, Jan. 6, 2025 (Maine Public Radio, Portland Press Herald)</li>
+        <li>Mayor Dion — State of the City, Dec. 2025 (News Center Maine)</li>
+        <li>Mayor Dion — Testimony on LD 1287 (April 22, 2025) and LD 1476 (May 2, 2025), Maine Legislature</li>
+        <li>Maine Legislature — LD 1476, LD 1287, LD 1041 — 132nd Session</li>
+        <li>WGME — Portland sues Maine DHHS, May 7, 2025</li>
+        <li>Bangor Daily News — Dion funding warning, Jan. 16, 2025</li>
+        <li>ACLU of Maine — Know Your Rights: Homelessness in Portland</li>
+        <li>Preble Street — Strategic Vision 2024–2027; Wellness Shelter docs; annual reviews</li>
+        <li>MEREDA — HSC Spotlight, Sept. 24, 2024</li>
+        <li>Portland Press Herald — Brianna Soukup/Ben McCanna coverage, 2023–2025</li>
+        <li>Maine Public Radio — Dion coverage, Jan. 8, 2025</li>
+        <li>News Center Maine — HSC opening March 2023; Dion interview Nov. 2025</li>
+        <li>New Hampshire Bulletin — Camping bans in Maine, Dec. 30, 2024</li>
+      </ul>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: 12px; color: var(--ink-3); line-height: 1.8;">
-      <div>
-        <h3>Primary Sources</h3>
-        <ul style="padding-left: 1.2rem;">
-          <li>MaineHousing — 2025 Point-in-Time Count Report (Jan. 22, 2025)</li>
-          <li>MaineHousing — 2024 Point-in-Time Count Report (Jan. 23, 2024)</li>
-          <li>City of Portland HHS — 2023 Year in Review: Homeless Services</li>
-          <li>City of Portland — Camping Ordinance (portland.gov)</li>
-          <li>City of Portland — Unhoused Community Dashboard (ArcGIS)</li>
-          <li>Preble Street — Strategic Vision 2024–2027</li>
-          <li>Preble Street — Wellness Shelter planning documentation</li>
-          <li>ACLU of Maine — Know Your Rights: Homelessness in Portland</li>
-        </ul>
-      </div>
-      <div>
-        <h3>News & Analysis Sources</h3>
-        <ul style="padding-left: 1.2rem;">
-          <li>Maine Morning Star — Feb. 7, 2025; Jun. 7, 2024</li>
-          <li>Portland Press Herald — multiple 2024–2025 articles</li>
-          <li>News Center Maine — 2023 HHS report coverage</li>
-          <li>Maine Law Review — Volume 77, Number 2 (June 2025)</li>
-          <li>Maine Legislature — HP 0968, 132nd Session (2025)</li>
-          <li>U.S. Supreme Court — City of Grants Pass v. Johnson (2024)</li>
-        </ul>
-        <div class="data-note" style="margin-top: 1rem;">
-          This site was compiled using data published through mid-2025. Bed counts are approximate; contact 211 for real-time availability. Policy statuses reflect known actions as of publication. This site has no affiliation with any government body or advocacy organization.
-        </div>
+    <div>
+      <h3 class="sub">National / research sources</h3>
+      <ul style="padding-left:1.2rem">
+        <li>HUD 2024 Annual Homelessness Assessment Report (AHAR)</li>
+        <li>National Alliance to End Homelessness — State of Homelessness 2025</li>
+        <li>Brookings Institution — "Homelessness in U.S. Cities," Oct. 2024</li>
+        <li>Community Solutions — Built for Zero methodology</li>
+        <li>Coalition for the Homeless NYC — State of the Homeless 2025</li>
+        <li>Smart Cities Dive — Houston Initiative, Sept. 2025; Denver, Jan. 2025</li>
+        <li>U.S. Supreme Court — City of Grants Pass v. Johnson (2024)</li>
+        <li>Maine Law Review — Vol. 77, No. 2 (June 2025)</li>
+        <li>Independent Institute — "Which U.S. Cities Are Solving Homelessness?" Feb. 2026</li>
+      </ul>
+      <div class="dnote" style="margin-top:1rem">
+        This site covers <strong>Portland, Maine exclusively</strong>. Keith Wilson and Ted Wheeler are mayors of Portland, Oregon — they do not appear in this site. This site has no affiliation with any government body, political party, or advocacy organization. Bed counts are approximate; call 211 for real-time availability. To report corrections, open a GitHub issue on this repository.
       </div>
     </div>
   </div>
+</div>
 </section>
 
 <footer class="site-footer">
-  <div>Portland, Maine Homelessness Data Hub — An open-reference resource</div>
-  <div style="margin-top: 4px;">All data sourced from MaineHousing, City of Portland HHS, Preble Street, and publicly available government records.</div>
-  <div style="margin-top: 4px;">For shelter access: call <strong style="color: rgba(245,243,238,0.7);">211</strong> · For emergencies: <strong style="color: rgba(245,243,238,0.7);">911</strong> · For policy questions: <a href="https://www.portlandmaine.gov">portlandmaine.gov</a></div>
-  <div style="margin-top: 8px; color: rgba(245,243,238,0.2); font-size: 10px;">This site does not advocate for any specific policy position. Statistics are presented as reported by primary sources. Data caveats are noted throughout.</div>
+  <div><strong>Portland, Maine Homelessness Data Hub</strong> — An independent, nonpartisan public reference</div>
+  <div style="margin-top:5px">Mayor of Portland, Maine: <strong>Mark Dion</strong> (inaugurated Jan. 6, 2024) · This site covers Portland, Maine only</div>
+  <div style="margin-top:5px">Data from: MaineHousing · City of Portland HHS · Preble Street · Maine Legislature · HUD · No Oregon data</div>
+  <div style="margin-top:5px">Shelter access: <strong>211</strong> · Emergencies: <strong>911</strong> · City info: <a href="https://www.portlandmaine.gov">portlandmaine.gov</a> · <a href="https://www.preblestreet.org">preblestreet.org</a> · <a href="https://www.mainehousing.org">mainehousing.org</a></div>
+  <div style="margin-top:10px;color:rgba(250,248,243,.18);font-size:9.5px">No editorial position on any policy. Statistics presented as reported. Data caveats noted throughout. Not affiliated with the City of Portland, Preble Street, or any political organization.</div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-Chart.defaults.font.family = "'IBM Plex Mono', monospace";
-Chart.defaults.font.size = 11;
-Chart.defaults.color = '#6b6b65';
-
-const gridColor = 'rgba(0,0,0,0.06)';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+Chart.defaults.color = '#5a5a55';
+const grid = 'rgba(0,0,0,0.05)';
 
 new Chart(document.getElementById('pitTrend'), {
-  type: 'bar',
-  data: {
-    labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
-    datasets: [
-      {
-        label: 'Unsheltered',
-        data: [130, 160, 200, 230, 273, 220],
-        backgroundColor: '#c0392b',
-        borderWidth: 0
-      },
-      {
-        label: 'In shelters',
-        data: [800, 850, 950, 1050, 1342, 1290],
-        backgroundColor: '#2563a8',
-        borderWidth: 0
-      },
-      {
-        label: 'Transitional housing',
-        data: [226, 260, 300, 492, 732, 680],
-        backgroundColor: '#1e6b42',
-        borderWidth: 0
-      },
-      {
-        label: 'Emergency motels',
-        data: [0, 200, 2961, 1954, 348, 220],
-        backgroundColor: '#925900',
-        borderWidth: 0
-      }
+  type:'bar',
+  data:{
+    labels:['2020','2021','2022','2023','2024','2025'],
+    datasets:[
+      {label:'Unsheltered',data:[130,160,200,230,273,220],backgroundColor:'#b83228',borderWidth:0},
+      {label:'In shelters',data:[800,850,950,1050,1342,1290],backgroundColor:'#1a56a0',borderWidth:0},
+      {label:'Transitional',data:[226,260,300,492,732,680],backgroundColor:'#1a5e3a',borderWidth:0},
+      {label:'Emergency motels',data:[0,200,2961,1954,348,220],backgroundColor:'#8a5200',borderWidth:0}
     ]
   },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString()
-        }
-      }
-    },
-    scales: {
-      x: { stacked: true, grid: { display: false } },
-      y: { stacked: true, grid: { color: gridColor }, ticks: { callback: v => v.toLocaleString() } }
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y.toLocaleString()}}},
+    scales:{
+      x:{stacked:true,grid:{display:false}},
+      y:{stacked:true,grid:{color:grid},ticks:{callback:v=>v>=1000?Math.round(v/1000)+'k':v}}
     }
   }
 });
 
-new Chart(document.getElementById('stayLength'), {
-  type: 'bar',
-  data: {
-    labels: ['2020', '2021', '2022', '2023', '2024'],
-    datasets: [{
-      label: 'Avg. days',
-      data: [18.2, 14.1, 10.3, 8.4, 11.6],
-      backgroundColor: ['#D4B86A','#D4B86A','#D4B86A','#D4B86A','#925900'],
-      borderWidth: 0
+new Chart(document.getElementById('stayLen'), {
+  type:'bar',
+  data:{
+    labels:['2020','2021','2022','2023','2024'],
+    datasets:[{
+      label:'Avg days',
+      data:[18.2,14.1,10.3,8.4,11.6],
+      backgroundColor:['#c9a860','#c9a860','#c9a860','#c9a860','#8a5200'],
+      borderWidth:0
     }]
   },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + ' days avg.' }
-      }
-    },
-    scales: {
-      x: { grid: { display: false } },
-      y: { grid: { color: gridColor }, ticks: { callback: v => v + 'd' }, beginAtZero: true }
-    }
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toFixed(1)+' days'}}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:grid},ticks:{callback:v=>v+'d'},beginAtZero:true}}
   }
 });
 
-new Chart(document.getElementById('breakdown2024'), {
-  type: 'doughnut',
-  data: {
-    labels: ['In shelters (1,342)', 'Transitional housing (732)', 'Emergency motels (348)', 'Unsheltered (273)'],
-    datasets: [{
-      data: [1342, 732, 348, 273],
-      backgroundColor: ['#2563a8', '#1e6b42', '#925900', '#c0392b'],
-      borderWidth: 2,
-      borderColor: '#fff'
+new Chart(document.getElementById('donut2024'), {
+  type:'doughnut',
+  data:{
+    labels:['In shelters (1,342)','Transitional (732)','Emergency motels (348)','Unsheltered (273)'],
+    datasets:[{
+      data:[1342,732,348,273],
+      backgroundColor:['#1a56a0','#1a5e3a','#8a5200','#b83228'],
+      borderWidth:2,borderColor:'#fff'
     }]
   },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '62%',
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => ctx.label + ' — ' + Math.round(ctx.parsed / 2695 * 100) + '%'
-        }
-      }
-    }
+  options:{
+    responsive:true,maintainAspectRatio:false,cutout:'65%',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+' — '+Math.round(c.parsed/2695*100)+'%'}}}
   }
 });
 
 new Chart(document.getElementById('housingUnits'), {
-  type: 'bar',
-  data: {
-    labels: ['2023', '2024', '2025 (projected)'],
-    datasets: [{
-      label: 'Units',
-      data: [420, 775, 727],
-      backgroundColor: ['#1e6b42', '#1e6b42', '#9FE1CB'],
-      borderWidth: 0
+  type:'bar',
+  data:{
+    labels:['2023','2024','2025 (proj.)'],
+    datasets:[{
+      label:'Units',
+      data:[420,775,727],
+      backgroundColor:['#1a5e3a','#1a5e3a','#9FE1CB'],
+      borderWidth:0
     }]
   },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' units' } }
-    },
-    scales: {
-      x: { grid: { display: false } },
-      y: { grid: { color: gridColor }, beginAtZero: true }
-    }
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' units'}}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:grid},beginAtZero:true}}
   }
 });
 </script>
